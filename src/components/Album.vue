@@ -75,17 +75,16 @@
           </div>
 
         <div class="mdui-row">
-          <mdui-row-xs-12>
             <button v-if="!load" class="mdui-btn mdui-btn-raised mdui-ripple mdui-center" v-on:click="onload()">点击加载更多</button>
 
             <!-- load -->
             <div v-if="load" class="mdui-spinner mdui-center"><div class="mdui-spinner-layer "><div class="mdui-spinner-circle-clipper mdui-spinner-left"><div class="mdui-spinner-circle"></div></div><div class="mdui-spinner-gap-patch"><div class="mdui-spinner-circle"></div></div><div class="mdui-spinner-circle-clipper mdui-spinner-right"><div class="mdui-spinner-circle"></div></div></div></div>
-          </mdui-row-xs-12>
+          
         </div>
 
         </div>
 
-        <div class="mdui-col-md-3 you mdui-hidden-sm-down">
+        <div class="mdui-col-md-3 you mdui-hidden-sm-down" v-if="albuminfo.length != 0">
           <div class="zhu"></div>
           <span class="title"><b>{{albuminfo[0].album_name}}</b></span>
           <div style="line-height:20px;font-size: 13px;">

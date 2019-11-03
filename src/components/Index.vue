@@ -33,12 +33,11 @@
           </div>
 
         <div class="mdui-row">
-          <mdui-row-xs-12>
             <button v-if="!load" class="mdui-btn mdui-btn-raised mdui-ripple mdui-center" v-on:click="onload()">点击加载更多</button>
 
             <!-- load -->
             <div v-if="load" class="mdui-spinner mdui-center"><div class="mdui-spinner-layer "><div class="mdui-spinner-circle-clipper mdui-spinner-left"><div class="mdui-spinner-circle"></div></div><div class="mdui-spinner-gap-patch"><div class="mdui-spinner-circle"></div></div><div class="mdui-spinner-circle-clipper mdui-spinner-right"><div class="mdui-spinner-circle"></div></div></div></div>
-          </mdui-row-xs-12>
+          
         </div>
 
         </div>
@@ -84,7 +83,7 @@ export default {
       this.$http.get("http://localhost:3000/juzi").then(response => {
         // 响应成功回调
         // 打印获取到的数据
-        console.log(response);
+        // console.log(response);
         // 把数据赋值给customers
         this.customers = response.data;
         console.log(this.customers);

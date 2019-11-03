@@ -4,17 +4,18 @@
     <div class="mdui-container">
     <div class="mdui-row">
         <h1>创建专辑</h1>
-        
 
     </div>
     </div>
-    
   </div>
 </template>
 
 <script>
+
 export default {
-  name: "createalbum"
+  name: "createalbum",
+  created() {
+  }
 };
 </script>
 
