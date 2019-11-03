@@ -3,6 +3,8 @@ import VueRouter from 'vue-router'
 import Home from '../views/Home.vue'
 import Login from './../components/Login.vue'
 import Register from './../components/Register.vue'
+import CreateAlbum from './../components/CreateAlbum.vue'
+import Sentence from './../components/Sentence.vue'
 
 Vue.use(VueRouter)
 
@@ -29,6 +31,16 @@ const routes = [
     path: '/register',
     name: 'register',
     component:Register
+  },
+  {
+    path: '/createalbum',
+    name: 'createalbum',
+    component:CreateAlbum
+  },
+  {
+    path: '/sentence/:id',
+    name: 'sentence',
+    component:Sentence
   }
 ]
 

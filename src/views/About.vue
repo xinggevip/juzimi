@@ -4,16 +4,23 @@
       <div class="mdui-row" id="listfather">
 
         <div class="mdui-row-xs-3 mdui-row-md-5">
+
           <div class="mdui-col wbj" v-for="album in albums" :key="album.album_id">
-            <a href="javascript:;" class="title">
-              <img class="picture" :src="album.album_picture" alt />
-              <br />
+            
+            <router-link href="javascript:;" class="kuang"  v-bind:to="'/sentence/' + album.album_id">
+              <!-- <img class="picture" :src="album.album_picture" alt /> -->
+              <!-- 动态绑定style属性 -->
+              <div class="tu mdui-hoverable" v-bind:style="{ 'background-image': 'url(' + album.album_picture + ')'}">
+                
+              </div>
               <div class="xian">
                 <a class="title" href="javascript:;">{{album.album_name}}</a>
               </div>
-            </a>
+            </router-link>
           </div>
         </div>
+
+
 
       </div>
 
@@ -29,7 +36,7 @@
     </div>
 
 
-
+    <button class="mdui-fab mdui-fab-fixed mdui-color-theme" v-on:click="writer(1)"><i class="mdui-icon material-icons">add</i></button>
 
 
     <Footer></Footer>
@@ -40,19 +47,23 @@
 import Footer from "@/components/Footer.vue";
 
 export default {
+  name:"about",
   components: {
      Footer
    },
   data() {
     return {
       albums: [],
-      load:false,
+      load:true,
       more:[]
     };
   },
 
   mounted() {
     this.$$.mutation();
+    // 获取图片宽度，
+    // 根据一定比例设置图片高度
+    // 监听窗口大小
     
   },
   methods: {
@@ -65,6 +76,7 @@ export default {
         // 把数据赋值给customers
         this.albums = response.data;
         console.log(this.albums);
+        this.load = false;
       }),
         function(response) {
           // 响应错误回调
@@ -95,15 +107,10 @@ export default {
         function(response) {
           // 响应错误回调
         };
-
-
-
-      
-
-      // 遍历数组append添加标签
-      
-      
-
+    },
+    writer:function(num){
+      // this.$$.alert(num);
+      this.$router.push({path:'/createalbum'});
     }
   },
   created() {
@@ -117,9 +124,25 @@ export default {
 </script>
 
 <style lang="less">
+.kuang{
+  width: 100%;
+  text-decoration: none;
+}
+.tu{
+  width:100%;
+  height:0px;
+  padding-bottom:150%;
+  // background-color:blue;
+  overflow: hidden;
+  border-radius: 5px;
+  // background-image:url('https://r1.ykimg.com/050E00005D897465ADA7B257BF0B7D07?x-oss-process=image/resize,w_290/interlace,1/quality,Q_80/sharpen,100');
+  background-repeat:no-repeat;
+  background-size:cover;
+  background-position: center;
+}
 .picture {
   width: 100%;
-  border-radius: 5px;
+  height: 100%;
 }
 .title {
   width: 100%;
@@ -135,9 +158,10 @@ export default {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  line-height: 30px;
 }
 .wbj {
-  margin-bottom: 16px;
+  margin-bottom: 5px;
   // box-sizing:border-box;
   // padding: 10px;
 }

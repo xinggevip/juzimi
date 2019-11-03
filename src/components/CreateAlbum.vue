@@ -1,9 +1,11 @@
 <template>
-  <div class="ifooter">
+  <div class="createalbum">
     <!-- 尾部 -->
     <div class="mdui-container">
     <div class="mdui-row">
-        <div class="mdui-color-theme-100 mdui-col-xs-12" id="content-footer">Copyright</div>
+        <h1>创建专辑</h1>
+        
+
     </div>
     </div>
     
@@ -12,18 +14,11 @@
 
 <script>
 export default {
-  name: "ifooter"
+  name: "createalbum"
 };
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="less">
-#content-footer {   
-    // position:fixed;
-    bottom: 0px;
-    padding: 30px;
-}
-.mdui-container{
-  padding-bottom: 0px;
-}
+
 </style>
