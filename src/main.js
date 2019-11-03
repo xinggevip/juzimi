@@ -4,6 +4,8 @@ import App from './App.vue'
 import router from './router'
 import mdui from 'mdui'
 import store from './store/store.js'
+// import 'assets/css/element.css'
+import ElementUI from 'element-ui';
 import 'default-passive-events'
 //导入axios组件
 import axios from 'axios'
@@ -14,6 +16,7 @@ Vue.prototype.$http = axios
 Vue.config.productionTip = false
 Vue.prototype.$$ = mdui
 
+Vue.use(ElementUI);
 
 
 router.beforeEach((to, from, next) => {
