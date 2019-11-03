@@ -1,5 +1,5 @@
 <template>
-  <div class="about">
+  <div class="classify">
     <div class="mdui-container">
       <div class="mdui-row" id="listfather">
 
@@ -7,7 +7,7 @@
 
           <div class="mdui-col wbj" v-for="album in albums" :key="album.album_id">
             
-            <router-link href="javascript:;" class="kuang"  v-bind:to="'/sentence/' + album.album_id">
+            <router-link href="javascript:;" class="kuang"  v-bind:to="'/album/' + album.album_id">
               <!-- <img class="picture" :src="album.album_picture" alt /> -->
               <!-- 动态绑定style属性 -->
               <div class="tu mdui-hoverable" v-bind:style="{ 'background-image': 'url(' + album.album_picture + ')'}">
@@ -47,7 +47,7 @@
 import Footer from "@/components/Footer.vue";
 
 export default {
-  name:"about",
+  name:"classify",
   components: {
      Footer
    },
@@ -119,7 +119,10 @@ export default {
     // var inst = new mdui.Tab('#tab');
     // // 刷新网页选项卡选中电影选项
     // inst.show('tab2');
+
+    console.log("此分类的id为：" + this.$route.params.classifyid);
   }
+  
 };
 </script>
 
