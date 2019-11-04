@@ -4,7 +4,7 @@
 
     <div class="mdui-container">
       <div class="mdui-row">
-        <div class="mdui-col-md-8">
+        <div class="mdui-col-md-9">
           <div class="mdui-row">
             
             <div class="mdui-col-md-12" v-for="customer in customers" :key="customer.id">
@@ -42,8 +42,38 @@
 
         </div>
 
-        <div class="mdui-col-md-4 you">
-          <div class="zhu">不知道写啥</div>
+        <div class="mdui-col-md-3 you mdui-hidden-sm-down">
+          <div class="zhu" style="margin-bottom:16px;">
+              <div class="tjtitle" style="border-bottom:1px solid #ccc;padding-bottom:11px;padding-top:7px;">
+                <b>推荐专辑</b>
+              </div>
+              <p>
+                    <ul class="tjlist">
+                      <li><a href="javascript:;" class="mdui-text-color-black-secondary">《功夫1111》</a></li>
+                      <li><a href="javascript:;" class="mdui-text-color-black-secondary">《功夫1111》</a></li>
+                      <li><a href="javascript:;" class="mdui-text-color-black-secondary">《功夫1111》</a></li>
+                      <li><a href="javascript:;" class="mdui-text-color-black-secondary">《功夫1111》</a></li>
+                      <li><a href="javascript:;" class="mdui-text-color-black-secondary">《功夫1111》</a></li>
+                      <li><a href="javascript:;" class="mdui-text-color-black-secondary">《功夫1111》</a></li>
+                      <li><a href="javascript:;" class="mdui-text-color-black-secondary">《功夫1111》</a></li>
+                      
+                    </ul>
+
+              </p>
+              
+
+          </div>
+
+          <div class="zhu">
+            <div class="tjtitle" style="border-bottom:1px solid #ccc;padding-bottom:12px;padding-top:8px;">
+                <b>扫码体验移动端</b>
+            </div>
+            <div style="width:100%;padding:20px;box-sizing:border-box;">
+                <img src="https://www.qiangssvip.com/usr/uploads/2019/03/2801480982.jpg" alt="" style="width:100%;margin-top:2px;">
+            </div>
+            
+          </div>
+
         </div>
       </div>
     </div>
@@ -124,7 +154,8 @@ export default {
 };
 </script>
 
-<style lang="less" scoped>
+<style lang="less" >
+
 .you {
   // background-color: red;
   height: 500px;
@@ -148,7 +179,32 @@ export default {
 }
 .zhu {
   width: 100%;
-  padding: 10px 0px;
+  padding: 10px;
   background-color: white;
+  box-sizing: border-box;
+}
+.tjlist{
+  margin:0;
+  padding-left:0px;
+  padding-top: 0px;
+  li{
+    list-style:none;
+    width: 100%;
+    // background-color: red;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    a{
+      text-decoration: none;
+      line-height: 26px;
+      color: #333;
+      
+      &:hover{
+        color: red;
+        text-decoration: underline;
+        
+      }
+    }
+  }
 }
 </style>

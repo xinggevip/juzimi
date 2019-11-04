@@ -47,17 +47,29 @@
     <div class="mdui-drawer" id="content-drawer">
       <div class="mdui-card">
         <div class="mdui-card-media">
-          <img src="https://www.mdui.org/docs/assets/docs/img/card.jpg" />
-          <div class="mdui-card-media-covered mdui-card-media-covered-gradient">
+          <!-- <img src="https://hdqwalls.com/wallpapers/material-design-stock-4k-y7.jpg" height="150xp;"/> -->
+          <img src="https://cdn.wallpapersafari.com/98/20/h5e7vT.jpg" height="150xp;"/>
+          <!-- <img src="https://1.bp.blogspot.com/-imPGeN0jP9E/XTFp85B05bI/AAAAAAAAIkw/YhlOmhgZ_i0_0i7l5M1Jx_JBOhiw9pOIwCKgBGAs/w914-h514-p-k-no-nu/snow-mountain-night-landscape-minimalist-digital-art-uhdpaper.com-4K-50-wp.thumbnail.jpg" height="150xp;"/> -->
+          <div class="mdui-card-media-covered ">
             <div class="mdui-card-primary">
               <div v-if="token" class="mdui-card-primary-title">{{user.user_id}}</div>
               <div v-if="token == null" class="mdui-card-primary-title">未登录</div>
-              <div v-if="token" class="mdui-card-primary-subtitle" style="overflow: hidden;text-overflow: ellipsis;" >{{user.user_say}}</div>
+              <div v-if="token" class="mdui-card-primary-subtitle" style="overflow: hidden;text-overflow: ellipsis;font-size:13px;padding-top:2px;" >{{user.user_say}}</div>
               <div v-if="token == null" class="mdui-card-primary-subtitle"><router-link to="/login" style="color:pink">登录</router-link> 使用全部功能</div>
               
             </div>
+            
+            <div class="mdui-card-actions" style="font-size:5px;opacity:0.7;margin-left:-7px;" v-if="token != null">
+              <button class="mdui-btn mdui-ripple mdui-ripple-white" v-on:click="toprofile(user.user_id)">我的主页</button>
+              <button class="mdui-btn mdui-ripple mdui-ripple-white">编辑资料</button>
+            </div>
+
           </div>
         </div>
+        
+        
+
+
       </div>
 
       <ul class="mdui-list">
@@ -111,6 +123,12 @@ export default {
     // inst.show('tab2');
   },
   methods: {
+    toprofile:function(url){
+      if(url != null){
+        window.location.href="http://localhost:8080/profile/" + url;
+      }
+      
+    },
     tologin: function() {
       
       // alert("跳转到登录");
