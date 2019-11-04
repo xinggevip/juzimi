@@ -33,7 +33,7 @@ const routes = [
         component:Classify
       },
       {
-        path:'/album/:albumid',
+        path:'/classify/:classifyid/album/:albumid',
         name:'album',
         component:Album
       },

@@ -120,12 +120,12 @@
       :width="dialogWidth"
     >
     <!-- 添加用户的表单 -->
-      <el-form ref="addFormRef" :rules="rulesAddUser" :model="addUser" label-width="100px" v-if="albuminfo.length != 0">
+      <el-form ref="addFormRef" :rules="rulesAddUser" :model="addSentence" label-width="100px" v-if="albuminfo.length != 0">
         <el-form-item prop="sentence_txt" label="句子">
-          <el-input v-model="addUser.sentence_txt"></el-input>
+          <el-input v-model="addSentence.sentence_txt"></el-input>
         </el-form-item>
         <el-form-item prop="sentence_txt" label="作者">
-          <el-input v-model="addUser.author_name"></el-input>
+          <el-input v-model="addSentence.author_name"></el-input>
         </el-form-item>
         <el-form-item  label="专辑">
           <el-input v-model="albuminfo[0].album_name" :disabled="true"></el-input>
@@ -158,7 +158,7 @@ export default {
       dialogWidth: "0px", // 屏幕宽度
       dialogTableVisible: false, // 添加用户弹框
       // 添加用户
-      addUser: {
+      addSentence: {
         sentence_txt: '',
         author_name: '',
       },
@@ -260,12 +260,34 @@ export default {
       
       this.$refs.addFormRef.validate(async valid => {
         if (!valid) return null  // 如果验证失败就不往下继续执行
-        const { data: res } = await this.$http.post('users', this.addUser)
-        if (res.meta.status !== 201) return this.$message.error(res.meta.msg)
-        this.$message.success('添加成功')
-        this.dialogTableVisible = false  // 关闭弹框
-        this.$refs.addFormRef.resetFields() // 清空表单
-        this.getUserList() // 重新调用，刷新表单
+        let user = JSON.parse(this.$store.state.user); // 从vuex取用户信息
+
+        let newSentence = {
+            sentence_txt : this.addSentence.sentence_txt,
+            author_name : this.addSentence.author_name,
+            user_id : user.user_id,
+            album_id : this.$route.params.albumid,
+            classfiy_id : this.$route.params.classifyid
+        }
+
+        console.log(newSentence);
+
+
+        // const { data: res } = await this.$http.post('http://localhost:3000/sentence', newSentence)
+        // if (res.meta.status !== 201) return this.$message.error(res.meta.msg)
+
+        this.$http.post("http://localhost:3000/sentence",newSentence)
+                    .then((response) =>{
+                        console.log(response);
+                        this.$message.success('添加成功')
+                        this.dialogTableVisible = false  // 关闭弹框
+                        this.$refs.addFormRef.resetFields() // 清空表单
+                        //this.getUserList() // 重新调用，刷新表单
+                        // this.$router.push({path:'/',query:{alert:"用户信息添加成功"}});
+                    })
+
+
+        
       })
     },
     // 设置对话框大小
