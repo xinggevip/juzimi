@@ -46,7 +46,7 @@
 
             
 
-
+            <h3 v-if="customers.length == 0">什么都没有，赶快发布一个吧</h3>
 
             
             <div class="mdui-col-md-12" v-for="customer in customers" :key="customer.id">
@@ -75,7 +75,7 @@
           </div>
 
         <div class="mdui-row">
-            <button v-if="!load" class="mdui-btn mdui-btn-raised mdui-ripple mdui-center" v-on:click="onload()">点击加载更多</button>
+            <button v-if="!load && customers.length != 0" class="mdui-btn mdui-btn-raised mdui-ripple mdui-center" v-on:click="onload()" >点击加载更多</button>
 
             <!-- load -->
             <div v-if="load" class="mdui-spinner mdui-center"><div class="mdui-spinner-layer "><div class="mdui-spinner-circle-clipper mdui-spinner-left"><div class="mdui-spinner-circle"></div></div><div class="mdui-spinner-gap-patch"><div class="mdui-spinner-circle"></div></div><div class="mdui-spinner-circle-clipper mdui-spinner-right"><div class="mdui-spinner-circle"></div></div></div></div>
@@ -108,7 +108,36 @@
         </div>
       </div>
     </div>
-    <button class="mdui-fab mdui-fab-fixed mdui-color-theme" v-on:click="writer(1)"><i class="mdui-icon material-icons">add</i></button>
+    <!-- 发布新句子 -->
+    <button class="mdui-fab mdui-fab-fixed mdui-color-theme" v-on:click="writer()"><i class="mdui-icon material-icons">add</i></button>
+    
+    <!-- 添加用户弹框 -->
+    <el-dialog
+      title="发布新句子"
+      @close="addDialogClose"
+      :visible.sync="dialogTableVisible"
+      :close-on-click-modal="false"
+      :width="dialogWidth"
+    >
+    <!-- 添加用户的表单 -->
+      <el-form ref="addFormRef" :rules="rulesAddUser" :model="addUser" label-width="100px" v-if="albuminfo.length != 0">
+        <el-form-item prop="sentence_txt" label="句子">
+          <el-input v-model="addUser.sentence_txt"></el-input>
+        </el-form-item>
+        <el-form-item prop="sentence_txt" label="作者">
+          <el-input v-model="addUser.author_name"></el-input>
+        </el-form-item>
+        <el-form-item  label="专辑">
+          <el-input v-model="albuminfo[0].album_name" :disabled="true"></el-input>
+        </el-form-item>
+        <el-form-item>
+          <el-button @click="dialogTableVisible = false">取消</el-button>
+          <el-button type="primary" @click="onAddUser">确定</el-button>
+        </el-form-item>
+      </el-form>
+    </el-dialog>
+    
+    
     <Footer></Footer>
   </div>
 </template>
@@ -125,7 +154,23 @@ export default {
       customers: [],
       more:[],
       load:true,
-      albuminfo:[]
+      albuminfo:[],
+      dialogWidth: "0px", // 屏幕宽度
+      dialogTableVisible: false, // 添加用户弹框
+      // 添加用户
+      addUser: {
+        sentence_txt: '',
+        author_name: '',
+      },
+      // 验证规则
+      rulesAddUser: {
+        sentence_txt: [
+          { required: true, message: '请输入句子', trigger: 'blur' }
+        ],
+        author_name: [
+          { required: true, message: '请输入作者', trigger: 'blur' }
+        ],
+      }
     };
   },
   name: "album",
@@ -135,6 +180,11 @@ export default {
   },
   mounted() {
     this.$$.mutation();
+    window.onresize = () => {
+      return (() => {
+        this.setDialogWidth()
+      })()
+    }
   },
 
   methods: {
@@ -194,13 +244,48 @@ export default {
         };
     },
      writer:function(num){
-      this.$$.alert("写句子");
+      // this.$$.alert("写句子");
+      this.dialogTableVisible = true;
+      var inst = new this.$$.Drawer('#content-drawer');
+      inst.close();
+      
+
+    },
+    // 关闭弹框的回调
+    addDialogClose() {
+      this.$refs.addFormRef.resetFields() // 清空表单
+    },
+    // 点击添加用户
+    onAddUser() {
+      
+      this.$refs.addFormRef.validate(async valid => {
+        if (!valid) return null  // 如果验证失败就不往下继续执行
+        const { data: res } = await this.$http.post('users', this.addUser)
+        if (res.meta.status !== 201) return this.$message.error(res.meta.msg)
+        this.$message.success('添加成功')
+        this.dialogTableVisible = false  // 关闭弹框
+        this.$refs.addFormRef.resetFields() // 清空表单
+        this.getUserList() // 重新调用，刷新表单
+      })
+    },
+    // 设置对话框大小
+    setDialogWidth() {
+      console.log(document.body.clientWidth)
+      var val = document.body.clientWidth
+      const def = 800 // 默认宽度
+      if (val < def) {
+        this.dialogWidth = '100%'
+      } else {
+        this.dialogWidth = def + 'px'
+      }
     }
   },
   created() {
     this.fetchCustomers();
     this.getAlbumInfo();
     console.log("专辑id为："+this.$route.params.albumid);
+    // 设置对话框宽度
+    this.setDialogWidth()
   }
 };
 </script>

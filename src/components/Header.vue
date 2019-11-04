@@ -135,7 +135,7 @@ export default {
     signout:function(){
         // alert("退出登录");
         this.$store.commit('LOGOUT');
-        mdui.snackbar({
+        this.$$.snackbar({
             message: '已退出登录',
             position: 'right-bottom'
           });

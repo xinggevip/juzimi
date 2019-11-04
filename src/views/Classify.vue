@@ -36,7 +36,7 @@
     </div>
 
 
-    <button class="mdui-fab mdui-fab-fixed mdui-color-theme" v-on:click="writer(1)"><i class="mdui-icon material-icons">add</i></button>
+    <button class="mdui-fab mdui-fab-fixed mdui-color-theme" v-on:click="writer(1)" ><i class="mdui-icon material-icons">add</i></button>
 
 
     <Footer></Footer>
