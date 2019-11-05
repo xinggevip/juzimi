@@ -8,7 +8,7 @@ import CreateAlbum from './../components/CreateAlbum.vue'
 import Album from './../components/Album.vue'
 import Index from './../components/Index.vue'
 import Profile from './../components/Profile.vue'
-import Issue from './../components/Issue.vue'
+
 
 Vue.use(VueRouter)
 
