@@ -73,31 +73,9 @@ export default {
       }).then(response => {
         console.log(typeof response.data);
         console.log(response.data);
-        
-      
 
-
-      // // get请求 登录
-      // this.$http.get("http://localhost:3000/user?user_id="+ this.user.user_id +"&user_password=" + this.user.user_password).then(response => {
-      // // this.$http.get("http://localhost:8081/login"+ this.user.user_id +"&user_password=" + this.user.user_password).then(response => {
-      //   // 响应成功回调
-      //   // 打印获取到的数据
-      //   console.log("-----------------");
-      //   console.log(response.data);
         if(response.data != ''){
-          // console.log("---------------" + response.data[0].user_id);
-          // alert("登录成功");
-          /* 把用户信息存储到浏览器 */
-          
-          // console.log(response.data[0]);
-          // let objStr = JSON.stringify(response.data);
-          // // console.log([objStr]);
-          // this.$store.commit('SET_TOKEN', true);
-          // this.$store.commit('GET_USER', objStr);
 
-          // alert("登录成功");
-          
-          // this.$router.push({path:'/'});
           mdui.snackbar({
             message: '注册成功',
             position: 'right-bottom'

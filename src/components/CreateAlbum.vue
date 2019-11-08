@@ -15,7 +15,7 @@
             name="albumPicture"
             list-type="picture-card"
             :limit="1"
-            
+            :file-list="fileList"
             :on-exceed="onExceed"
             :before-upload="beforeUpload"
             :on-preview="handlePreview"
@@ -29,19 +29,19 @@
                   :src="file.url" alt=""
                 >
                 <span class="el-upload-list__item-actions">
-                  <span
+                  <!-- <span
                     class="el-upload-list__item-preview"
                     @click="handlePictureCardPreview(file)"
                   >
                     <i class="el-icon-zoom-in"></i>
-                  </span>
-                  <span
+                  </span> -->
+                  <!-- <span
                     v-if="!disabled"
                     class="el-upload-list__item-delete"
                     @click="handleDownload(file)"
                   >
                     <i class="el-icon-download"></i>
-                  </span>
+                  </span> -->
                   <span
                     v-if="!disabled"
                     class="el-upload-list__item-delete"
@@ -97,6 +97,7 @@ export default {
    },
    data() {
     return {
+      fileList: [],
       album:{
         classifyId:this.$route.params.classifyid,
         albumPicture:''
@@ -109,6 +110,7 @@ export default {
       dialogVisible: false,
       //图片列表（用于在上传组件中回显图片）
       // fileList: [{name: '', url: ''}],
+      // fileList: [{}],
 
     };
   },
@@ -120,9 +122,9 @@ export default {
     //文件上传成功的钩子函数
         handleSuccess(res, file) {
             this.$message({
-                type: 'info',
+                type: 'success',
                 message: '图片上传成功',
-                duration: 6000
+                duration: 1500
             });
             if (file.response.success) {
                 // this.editor.picture = file.response.message; //将返回的文件储存路径赋值picture字段
@@ -132,12 +134,61 @@ export default {
         },
         //删除文件之前的钩子函数
         handleRemove(file, fileList) {
+
+          this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+          }).then(() => {
+            // 点确定来到了这
+            // this.$message({
+            //   type: 'success',
+            //   message: '删除成功!'
+            // });
+
+            // 调用删除图片api
+            this.$http.post("/api/delpicture",this.album,{
+                headers: {
+                    'Content-Type':'application/json;charset=UTF-8'
+                }
+
+              }).then(response => {
+                  console.log(response.data);
+                  
+                  if(response.data.success == true){
+                    // 删除成功执行
+                      this.$refs.upload.clearFiles();
+                      this.$message({
+                        type: 'success',
+                        message: response.data.message
+                      });
+                  }else{
+                    // 删除失败执行
+                    this.$refs.upload.clearFiles();
+                    this.$message({
+                      type: 'info',
+                      message: response.data.message
+                    });  
+                  }
+                }),
+                function(response) {
+                  // 响应错误回调
+                  this.$refs.upload.clearFiles();
+                  alert("未知错误");
+                };
+
+
+          }).catch(() => {
+            // 点取消来到了这
             this.$message({
-                type: 'info',
-                message: '已删除原有图片',
-                duration: 6000
-            });
+              type: 'info',
+              message: '已取消删除'
+            });          
+          });
+
+
         },
+
         //点击列表中已上传的文件事的钩子函数
         handlePreview(file) {
         },
@@ -172,7 +223,7 @@ export default {
         creatalbum:function(){
           console.log(this.album);
           if(this.album.albumPicture != ''){
-            alert("一切准备就绪,提交吧");
+            // alert("一切准备就绪,提交吧");
 
 
 
@@ -182,8 +233,8 @@ export default {
         }
 
         }).then(response => {
-          console.log(response);
-          console.log(typeof response.data);
+          // console.log(response);
+          // console.log(typeof response.data);
           console.log(response.data);
           // alert("成功回调");
         
