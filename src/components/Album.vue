@@ -322,6 +322,8 @@ export default {
     this.sentence.userId = (JSON.parse(this.$store.state.user)).userId;
     this.sentence.classfiyId = this.$route.params.classifyid;
     this.sentence.albumId = this.$route.params.albumid;
+    // 可以获取到全局图片地址
+    // alert(this.$global.globalPictureUrl);
   }
 };
 </script>

@@ -4,6 +4,7 @@ import App from './App.vue'
 import router from './router'
 import mdui from 'mdui'
 import store from './store/store.js'
+import Global from './components/Global'
 // import 'assets/css/element.css'
 import ElementUI from 'element-ui';
 import 'default-passive-events'
@@ -15,8 +16,12 @@ Vue.prototype.$http = axios
 
 Vue.config.productionTip = false
 Vue.prototype.$$ = mdui
+Vue.prototype.$global = Global
 
 Vue.use(ElementUI);
+// Vue.use(Global);
+
+
 
 
 router.beforeEach((to, from, next) => {

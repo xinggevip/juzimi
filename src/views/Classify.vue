@@ -5,16 +5,16 @@
 
         <div class="mdui-row-xs-3 mdui-row-md-5">
 
-          <div class="mdui-col wbj" v-for="album in albums" :key="album.album_id">
+          <div class="mdui-col wbj" v-for="album in albums" :key="album.albumId">
             
-            <router-link href="javascript:;" class="kuang"  v-bind:to="'/classify/'+ $route.params.classifyid +'/album/' + album.album_id">
+            <router-link href="javascript:;" class="kuang"  v-bind:to="'/classify/'+ $route.params.classifyid +'/album/' + album.albumId">
               <!-- <img class="picture" :src="album.album_picture" alt /> -->
               <!-- 动态绑定style属性 -->
-              <div class="tu mdui-hoverable" v-bind:style="{ 'background-image': 'url(' + album.album_picture + ')'}">
+              <div class="tu mdui-hoverable" v-bind:style="{ 'background-image': 'url(' + album.albumPicture + ')'}">
                 
               </div>
               <div class="xian">
-                <a class="title" href="javascript:;">{{album.album_name}}</a>
+                <a class="title" href="javascript:;">{{album.albumName}}</a>
               </div>
             </router-link>
           </div>
@@ -70,40 +70,80 @@ export default {
   methods: {
     // Get数据
     fetchCustomers() {
-      this.$http.get("http://localhost:3000/album").then(response => {
+      // this.$http.get("http://localhost:3000/album").then(response => {
+      //   // 响应成功回调
+      //   // 打印获取到的数据
+      //   // console.log(response);
+      //   // 把数据赋值给customers
+      //   this.albums = response.data;
+      //   console.log(this.albums);
+      //   this.load = false;
+      // }),
+      //   function(response) {
+      //     // 响应错误回调
+      //   };
+
+        this.$http.post("/api/getalbumsbyclassifyid?classifyid="+this.$route.params.classifyid).then(response => {
         // 响应成功回调
         // 打印获取到的数据
-        // console.log(response);
-        // 把数据赋值给customers
-        this.albums = response.data;
-        console.log(this.albums);
+        console.log(response.data);
+        let arr = response.data;
+        arr.forEach((item, index) => {
+          item.albumPicture = this.$global.globalPictureUrl + item.albumPicture;
+          // console.log(item);
+          this.albums.push(item);
+        })
         this.load = false;
       }),
         function(response) {
           // 响应错误回调
         };
+
+
+
     },
     onload:function(){
       // alert("hjk");
       this.load = true;
 
       // 获取数据
-      this.$http.get("http://localhost:3000/more").then(response => {
+      // this.$http.get("http://localhost:3000/more").then(response => {
+      // this.$http.get("/api/getalbumsbyclassifyid",this.$route.params.classifyid).then(response => {
+      //   // 响应成功回调
+      //   // 打印获取到的数据
+      //   console.log(response);
+      //   // 把数据赋值给customers
+      //   this.more = response.data;
+      //   console.log(this.more);
+
+      //   // 遍历数据
+      //   this.more.forEach((item, index) => {
+        
+      //   this.albums.push(item);
+      //   this.load = false;
+
+
+      //   })
+      // }),
+      //   function(response) {
+      //     // 响应错误回调
+      //   };
+
+
+      // alert(typeof this.$route.params.classifyid);
+      // alert(this.$route.params.classifyid);
+      
+      this.$http.post("/api/getalbumsbyclassifyid?classifyid="+this.$route.params.classifyid).then(response => {
         // 响应成功回调
         // 打印获取到的数据
-        console.log(response);
-        // 把数据赋值给customers
+        console.log(response.data);
         this.more = response.data;
-        console.log(this.more);
-
-        // 遍历数据
         this.more.forEach((item, index) => {
-        
-        this.albums.push(item);
-        this.load = false;
-
-
+          item.albumPicture = this.$global.globalPictureUrl + item.albumPicture;
+          // console.log(item);
+          this.albums.push(item);
         })
+        this.load = false;
       }),
         function(response) {
           // 响应错误回调
@@ -119,6 +159,7 @@ export default {
   },
   created() {
     this.fetchCustomers();
+    // this.onload();
     // this.$$.mutation();
     // var inst = new mdui.Tab('#tab');
     // // 刷新网页选项卡选中电影选项
