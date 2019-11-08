@@ -71,7 +71,7 @@
 
           <!-- <button class="mdui-btn mdui-btn-raised mdui-ripple mdui-color-theme-accent mdui-float-right mdui-color-theme-400" style="top:10px;margin-left:13px;" v-on:click="submitting = !submitting">立即创建</button> -->
           <!-- <button class="mdui-btn mdui-btn-raised mdui-ripple mdui-color-theme-accent mdui-float-right mdui-color-theme-400" style="top:10px;margin-left:13px;" v-on:click="creatalbum">立即创建</button> -->
-          <input type="submit" class="mdui-btn mdui-btn-raised mdui-ripple mdui-color-theme-accent mdui-float-right mdui-color-theme-400" style="top:10px;margin-left:13px;" value="立即创建" />
+          <input type="submit" class="mdui-btn mdui-btn-raised mdui-ripple mdui-color-theme-accent mdui-float-right mdui-color-theme-400" style="top:10px;margin-left:13px;" value="立即创建" v-bind:disabled="submitting" />
           
           <!-- load -->
             <div v-if="submitting" class="mdui-spinner mdui-float-right" style="top:13px;"><div class="mdui-spinner-layer "><div class="mdui-spinner-circle-clipper mdui-spinner-left"><div class="mdui-spinner-circle"></div></div><div class="mdui-spinner-gap-patch"><div class="mdui-spinner-circle"></div></div><div class="mdui-spinner-circle-clipper mdui-spinner-right"><div class="mdui-spinner-circle"></div></div></div></div>
@@ -99,6 +99,7 @@ export default {
     return {
       fileList: [],
       album:{
+        userId:(JSON.parse(this.$store.state.user)).userId,
         classifyId:this.$route.params.classifyid,
         albumPicture:''
       },
@@ -116,7 +117,10 @@ export default {
   },
   name: "createalbum",
   created() {
-    console.log(jquery("h1"));
+    // console.log(jquery("h1"));
+    let sysuser = (JSON.parse(this.$store.state.user)).userId;
+    console.log(sysuser);
+   
   },
   methods:{
     //文件上传成功的钩子函数
@@ -135,7 +139,7 @@ export default {
         //删除文件之前的钩子函数
         handleRemove(file, fileList) {
 
-          this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
+          this.$confirm('此操作将删除该图片, 是否继续?', '提示', {
             confirmButtonText: '确定',
             cancelButtonText: '取消',
             type: 'warning'
@@ -147,6 +151,7 @@ export default {
             // });
 
             // 调用删除图片api
+            console.log(this.album);
             this.$http.post("/api/delpicture",this.album,{
                 headers: {
                     'Content-Type':'application/json;charset=UTF-8'
@@ -207,13 +212,13 @@ export default {
             const isGIF = file.type === 'image/gif';
             const isPNG = file.type === 'image/png';
             const isBMP = file.type === 'image/bmp';
-            const isLt2M = file.size / 1024 / 1024 < 2;
+            const isLt2M = file.size / 1024 / 1024 < 10;
 
             if (!isJPG && !isGIF && !isPNG && !isBMP) {
                 this.$message.error('上传图片必须是JPG/GIF/PNG/BMP 格式!');
             }
             if (!isLt2M) {
-                this.$message.error('上传图片大小不能超过 2MB!');
+                this.$message.error('上传图片大小不能超过 10MB!');
             }
             return (isJPG || isBMP || isGIF || isPNG) && isLt2M;
         },
@@ -222,6 +227,8 @@ export default {
         },
         creatalbum:function(){
           console.log(this.album);
+          // 显示loding
+          this.submitting = true;
           if(this.album.albumPicture != ''){
             // alert("一切准备就绪,提交吧");
 
@@ -237,7 +244,7 @@ export default {
           // console.log(typeof response.data);
           console.log(response.data);
           // alert("成功回调");
-        
+        this.submitting = false;
 
         if(response.data.success == true){
 
@@ -248,25 +255,34 @@ export default {
           // 待修改  v-bind:to="'/classify/'+ $route.params.classifyid +'/album/' + album.album_id"
           // setTimeout("javascript:location.href='http://localhost:8080/login'", 1000);
           setTimeout(() => {
-        
-            this.$router.push({path:'/classify/'+ this.$route.params.classifyid +'/album/' + response.data.albumId});
+            // 路由跳转elementui-对话框就报错，只能用原生跳转 操他妈的
+            // this.$router.push({path:'/classify/'+ this.$route.params.classifyid +'/album/' + response.data.albumId});
+            this.$router.push({path:'/classify/'+ this.$route.params.classifyid +'/album/' + 6});
         
           }, 1000);
+          // let url = 'http://localhost:8081/classify/' + this.$route.params.classifyid +'/album/' + response.data.albumId;
+          // setTimeout(()=>{
+          //   // location.href=url;
+          //   window.location.href=url;
+          // }, 1000);
 
         }else{
           alert("创建失败");
+          this.submitting = false;
         }
         
       }),
         function(response) {
           // 响应错误回调
           alert("创建失败");
+          this.submitting = false;
         };
 
 
 
 
           }else{
+            this.submitting = false;
             alert("请上传专辑图片");
           }
 

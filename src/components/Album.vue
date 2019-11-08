@@ -110,8 +110,8 @@
     </div>
     <!-- 发布新句子 -->
     <button class="mdui-fab mdui-fab-fixed mdui-color-theme" v-on:click="writer()"><i class="mdui-icon material-icons">add</i></button>
-    
-    <!-- 添加用户弹框 -->
+    <Footer></Footer>
+    <!-- 添加句子弹框 -->
     <el-dialog
       title="发布新句子"
       @close="addDialogClose"
@@ -119,26 +119,29 @@
       :close-on-click-modal="false"
       :width="dialogWidth"
     >
-    <!-- 添加用户的表单 -->
-      <el-form ref="addFormRef" :rules="rulesAddUser" :model="addSentence" label-width="100px" v-if="albuminfo.length != 0">
-        <el-form-item prop="sentence_txt" label="句子">
-          <el-input v-model="addSentence.sentence_txt"></el-input>
+    <!-- 添加句子的表单 -->
+      <!-- <el-form ref="addFormRef" :rules="rulesAddUser" :model="sentence" label-width="100px" v-if="albuminfo.length != 0"> -->
+      <el-form ref="addFormRef" :rules="rulesAddUser" :model="sentence" label-width="100px" v-if="albuminfo.length != 0">
+        <el-form-item prop="sentenceTxt" label="句子">
+          <el-input v-model="sentence.sentenceTxt"></el-input>
         </el-form-item>
-        <el-form-item prop="sentence_txt" label="作者">
-          <el-input v-model="addSentence.author_name"></el-input>
+        <el-form-item prop="authorName" label="作者">
+          <el-input v-model="sentence.authorName"></el-input>
         </el-form-item>
         <el-form-item  label="专辑">
           <el-input v-model="albuminfo[0].album_name" :disabled="true"></el-input>
         </el-form-item>
         <el-form-item>
           <el-button @click="dialogTableVisible = false">取消</el-button>
-          <el-button type="primary" @click="onAddUser">确定</el-button>
+          <el-button type="primary" @click="onAddSentence">确定</el-button>
         </el-form-item>
       </el-form>
+
+
     </el-dialog>
     
     
-    <Footer></Footer>
+    
   </div>
 </template>
 
@@ -151,24 +154,27 @@ import Footer from "@/components/Footer.vue";
 export default {
   data() {
     return {
+      sentence:{
+        
+      },
       customers: [],
       more:[],
       load:true,
       albuminfo:[],
       dialogWidth: "0px", // 屏幕宽度
       dialogTableVisible: false, // 添加用户弹框
-      // 添加用户
+      // 添加句子
       addSentence: {
         sentence_txt: '',
         author_name: '',
       },
       // 验证规则
       rulesAddUser: {
-        sentence_txt: [
-          { required: true, message: '请输入句子', trigger: 'blur' }
+        sentenceTxt: [
+          { required: true, message: '句子不能为空', trigger: 'blur' }
         ],
-        author_name: [
-          { required: true, message: '请输入作者', trigger: 'blur' }
+        authorName: [
+          { required: true, message: '作者不能为空', trigger: 'blur' }
         ],
       }
     };
@@ -255,39 +261,39 @@ export default {
     addDialogClose() {
       this.$refs.addFormRef.resetFields() // 清空表单
     },
-    // 点击添加用户
-    onAddUser() {
+    // 点击添加句子
+    onAddSentence() {
+      
       
       this.$refs.addFormRef.validate(async valid => {
-        if (!valid) return null  // 如果验证失败就不往下继续执行
-        let user = JSON.parse(this.$store.state.user); // 从vuex取用户信息
+        if (!valid) return null;  // 如果验证失败就不往下继续执行
+        // let user = JSON.parse(this.$store.state.user); // 从vuex取用户信息
 
-        let newSentence = {
-            sentence_txt : this.addSentence.sentence_txt,
-            author_name : this.addSentence.author_name,
-            user_id : user.user_id,
-            album_id : this.$route.params.albumid,
-            classfiy_id : this.$route.params.classifyid
-        }
+        // let newSentence = {
+        //     sentence_txt : this.addSentence.sentence_txt,
+        //     author_name : this.addSentence.author_name,
+        //     user_id : user.user_id,
+        //     album_id : this.$route.params.albumid,
+        //     classfiy_id : this.$route.params.classifyid
+        // }
 
-        console.log(newSentence);
+        // console.log(newSentence);
+
+        console.log(this.sentence);
 
 
         // const { data: res } = await this.$http.post('http://localhost:3000/sentence', newSentence)
         // if (res.meta.status !== 201) return this.$message.error(res.meta.msg)
 
-        this.$http.post("http://localhost:3000/sentence",newSentence)
-                    .then((response) =>{
-                        console.log(response);
-                        this.$message.success('添加成功')
-                        this.dialogTableVisible = false  // 关闭弹框
-                        this.$refs.addFormRef.resetFields() // 清空表单
-                        //this.getUserList() // 重新调用，刷新表单
-                        // this.$router.push({path:'/',query:{alert:"用户信息添加成功"}});
-                    })
-
-
-        
+        // this.$http.post("http://localhost:3000/sentence",newSentence)
+        //             .then((response) =>{
+        //                 console.log(response);
+        //                 this.$message.success('添加成功')
+        //                 this.dialogTableVisible = false  // 关闭弹框
+        //                 this.$refs.addFormRef.resetFields() // 清空表单
+        //                 //this.getUserList() // 重新调用，刷新表单
+        //                 // this.$router.push({path:'/',query:{alert:"用户信息添加成功"}});
+        //             })
       })
     },
     // 设置对话框大小
@@ -303,11 +309,19 @@ export default {
     }
   },
   created() {
+    this.$forceUpdate()
     this.fetchCustomers();
     this.getAlbumInfo();
+    console.log("分类id为："+this.$route.params.classifyid);
     console.log("专辑id为："+this.$route.params.albumid);
     // 设置对话框宽度
-    this.setDialogWidth()
+    this.setDialogWidth();
+    // 把值传递给句子对象
+    // let sysuser = JSON.parse(this.$store.state.user);
+
+    this.sentence.userId = (JSON.parse(this.$store.state.user)).userId;
+    this.sentence.classfiyId = this.$route.params.classifyid;
+    this.sentence.albumId = this.$route.params.albumid;
   }
 };
 </script>
