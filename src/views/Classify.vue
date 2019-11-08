@@ -36,7 +36,8 @@
     </div>
 
 
-    <button class="mdui-fab mdui-fab-fixed mdui-color-theme" v-on:click="writer(1)" ><i class="mdui-icon material-icons">add</i></button>
+    <button class="mdui-fab mdui-fab-fixed mdui-color-theme" v-on:click="tocreatealbum" ><i class="mdui-icon material-icons">add</i></button>
+    
 
 
     <Footer></Footer>
@@ -108,9 +109,12 @@ export default {
           // 响应错误回调
         };
     },
-    writer:function(num){
-      // this.$$.alert(num);
-      this.$router.push({path:'/createalbum'});
+    // writer:function(num){
+    //   // this.$$.alert(num);
+    //   this.$router.push({path:'/createalbum'});
+    // }
+    tocreatealbum:function(){
+      this.$router.push({path:'/classify/'+ this.$route.params.classifyid +'/createalbum'});
     }
   },
   created() {

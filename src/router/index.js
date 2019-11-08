@@ -50,7 +50,7 @@ const routes = [
         component:Register
       },
       {
-        path: '/createalbum',
+        path: '/classify/:classifyid/createalbum',
         name: 'createalbum',
         component:CreateAlbum,
         meta:{

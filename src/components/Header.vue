@@ -157,7 +157,7 @@ export default {
             message: '已退出登录',
             position: 'right-bottom'
           });
-          setTimeout("javascript:location.href='http://localhost:8080/login'", 1000);
+          setTimeout("javascript:location.href='http://localhost:8081/login'", 1000);
     },
     tospace:function(){
       alert("我的主页");

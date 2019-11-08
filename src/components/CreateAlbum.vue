@@ -3,15 +3,25 @@
     <!-- 尾部 -->
     <div class="mdui-container" style="padding-bottom:0px;">
     <div class="mdui-row">
-      <div class="mdui-col-xs-12 formbg">
+
+      <form v-on:submit.prevent="creatalbum">
+              <div class="mdui-col-xs-12 formbg">
           <h1>创建专辑</h1>
           <h4>上传专辑封面<span style="color:red;text-decoration: none;font-weight:normal"> 建议比例1：1.5</span></h4>
           <!-- 文件上传组件 -->
           <el-upload
-            action="#"
+            action="/api/upload"
+            ref="upload"
+            name="albumPicture"
             list-type="picture-card"
-            :auto-upload="false"
-            :file-list="fileList">
+            :limit="1"
+            
+            :on-exceed="onExceed"
+            :before-upload="beforeUpload"
+            :on-preview="handlePreview"
+            :on-success="handleSuccess"
+            :on-remove="handleRemove">
+
               <i slot="default" class="el-icon-plus"></i>
               <div slot="file" slot-scope="{file}">
                 <img
@@ -49,17 +59,25 @@
           <!-- 单行文本框 -->
           <div class="mdui-textfield mdui-textfield-floating-label">
             <label class="mdui-textfield-label">专辑名称</label>
-            <input class="mdui-textfield-input" type="text"/>
+            <input class="mdui-textfield-input" type="text" v-model="album.albumName" required/>
+            <div class="mdui-textfield-error">专辑名称不能为空</div>
           </div>
+          
           <!-- 多行文本框 -->
           <div class="mdui-textfield">
-            <textarea class="mdui-textfield-input" rows="4" placeholder="专辑介绍"></textarea>
+            <textarea class="mdui-textfield-input" rows="4" placeholder="专辑介绍" v-model="album.albumDetails" required ></textarea>
+            <div class="mdui-textfield-error">专辑介绍不能为空</div>
           </div>
 
-          <button class="mdui-btn mdui-btn-raised mdui-ripple mdui-color-theme-accent mdui-float-right mdui-color-theme-400" style="top:10px;margin-left:13px;" v-on:click="submitting = !submitting">立即创建</button>
+          <!-- <button class="mdui-btn mdui-btn-raised mdui-ripple mdui-color-theme-accent mdui-float-right mdui-color-theme-400" style="top:10px;margin-left:13px;" v-on:click="submitting = !submitting">立即创建</button> -->
+          <!-- <button class="mdui-btn mdui-btn-raised mdui-ripple mdui-color-theme-accent mdui-float-right mdui-color-theme-400" style="top:10px;margin-left:13px;" v-on:click="creatalbum">立即创建</button> -->
+          <input type="submit" class="mdui-btn mdui-btn-raised mdui-ripple mdui-color-theme-accent mdui-float-right mdui-color-theme-400" style="top:10px;margin-left:13px;" value="立即创建" />
+          
           <!-- load -->
             <div v-if="submitting" class="mdui-spinner mdui-float-right" style="top:13px;"><div class="mdui-spinner-layer "><div class="mdui-spinner-circle-clipper mdui-spinner-left"><div class="mdui-spinner-circle"></div></div><div class="mdui-spinner-gap-patch"><div class="mdui-spinner-circle"></div></div><div class="mdui-spinner-circle-clipper mdui-spinner-right"><div class="mdui-spinner-circle"></div></div></div></div>
       </div>
+      </form>
+
         
     </div>
     </div>
@@ -79,17 +97,131 @@ export default {
    },
    data() {
     return {
+      album:{
+        classifyId:this.$route.params.classifyid,
+        albumPicture:''
+      },
+      // 上传地址
       submitting:false,
-      fileList:[],
       disabled:false,
-      dialogVisible:false,
-      dialogImageUrl:null
+      //文件上传的参数
+      dialogImageUrl: '',
+      dialogVisible: false,
+      //图片列表（用于在上传组件中回显图片）
+      // fileList: [{name: '', url: ''}],
 
     };
   },
   name: "createalbum",
   created() {
     console.log(jquery("h1"));
+  },
+  methods:{
+    //文件上传成功的钩子函数
+        handleSuccess(res, file) {
+            this.$message({
+                type: 'info',
+                message: '图片上传成功',
+                duration: 6000
+            });
+            if (file.response.success) {
+                // this.editor.picture = file.response.message; //将返回的文件储存路径赋值picture字段
+                this.album.albumPicture = file.response.message; //将返回的文件储存路径赋值picture字段
+                // alert(this.album.albumPicture);
+            }
+        },
+        //删除文件之前的钩子函数
+        handleRemove(file, fileList) {
+            this.$message({
+                type: 'info',
+                message: '已删除原有图片',
+                duration: 6000
+            });
+        },
+        //点击列表中已上传的文件事的钩子函数
+        handlePreview(file) {
+        },
+        //上传的文件个数超出设定时触发的函数
+        onExceed(files, fileList) {
+            this.$message({
+                type: 'info',
+                message: '最多只能上传一个图片',
+                duration: 6000
+            });
+        },
+        //文件上传前的前的钩子函数
+        //参数是上传的文件，若返回false，或返回Primary且被reject，则停止上传
+        beforeUpload(file) {
+            const isJPG = file.type === 'image/jpeg';
+            const isGIF = file.type === 'image/gif';
+            const isPNG = file.type === 'image/png';
+            const isBMP = file.type === 'image/bmp';
+            const isLt2M = file.size / 1024 / 1024 < 2;
+
+            if (!isJPG && !isGIF && !isPNG && !isBMP) {
+                this.$message.error('上传图片必须是JPG/GIF/PNG/BMP 格式!');
+            }
+            if (!isLt2M) {
+                this.$message.error('上传图片大小不能超过 2MB!');
+            }
+            return (isJPG || isBMP || isGIF || isPNG) && isLt2M;
+        },
+        handlePictureCardPreview:function(file){
+
+        },
+        creatalbum:function(){
+          console.log(this.album);
+          if(this.album.albumPicture != ''){
+            alert("一切准备就绪,提交吧");
+
+
+
+        this.$http.post("/api/savealbum",this.album,{
+        headers: {
+            'Content-Type':'application/json;charset=UTF-8'
+        }
+
+        }).then(response => {
+          console.log(response);
+          console.log(typeof response.data);
+          console.log(response.data);
+          // alert("成功回调");
+        
+
+        if(response.data.success == true){
+
+          mdui.snackbar({
+            message: response.data.message,
+            position: 'right-bottom'
+          });
+          // 待修改  v-bind:to="'/classify/'+ $route.params.classifyid +'/album/' + album.album_id"
+          // setTimeout("javascript:location.href='http://localhost:8080/login'", 1000);
+          setTimeout(() => {
+        
+            this.$router.push({path:'/classify/'+ this.$route.params.classifyid +'/album/' + response.data.albumId});
+        
+          }, 1000);
+
+        }else{
+          alert("创建失败");
+        }
+        
+      }),
+        function(response) {
+          // 响应错误回调
+          alert("创建失败");
+        };
+
+
+
+
+          }else{
+            alert("请上传专辑图片");
+          }
+
+          // 阻止冒泡事件
+          // e.preventDefault();
+        }
   }
 };
 </script>

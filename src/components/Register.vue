@@ -102,7 +102,7 @@ export default {
             message: '注册成功',
             position: 'right-bottom'
           });
-          setTimeout("javascript:location.href='http://localhost:8080/login'", 1000);
+          setTimeout("javascript:location.href='http://localhost:8081/login'", 1000);
         }else{
           alert("注册失败");
         }
