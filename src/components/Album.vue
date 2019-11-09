@@ -23,12 +23,12 @@
                   
 
                 </div>
-                <div class="jian mdui-hidden-md-up">
+                <div class="jian mdui-hidden-md-up" v-if="albuminfo != null">
                   
                   <b class="mdui-text-color-black-secondary" style="font-size:15px">简介</b>
                   <br>
                   <span class="mdui-text-color-black-disabled">
-                    美国国防情报局特工亨利（威尔·史密斯饰），准备退休之际意外遭到一名神秘杀手的追杀，在两人的激烈较量中，他发现这名杀手竟然是年轻了20多岁的自己，一场我与我的对决旋即展开，而背后的真相也逐渐浮出水面。
+                    {{albuminfo.albumDetails}}
                   </span>
                   
                     
@@ -96,7 +96,7 @@
               共有100个句子
             </span>
           </div>
-          <div style="line-height:20px;">
+          <div style="line-height:20px;" v-if="albuminfo != null">
             <b style="line-height:30px;" class="mdui-text-color-black-secondary">简介</b>
             <br>
             <span class="mdui-text-color-black-disabled" style="text-indent:2em;">
@@ -121,7 +121,7 @@
     >
     <!-- 添加句子的表单 -->
       <!-- <el-form ref="addFormRef" :rules="rulesAddUser" :model="sentence" label-width="100px" v-if="albuminfo.length != 0"> -->
-      <el-form ref="addFormRef" :rules="rulesAddUser" :model="sentence" label-width="100px" v-if="albuminfo != null">
+      <el-form ref="addFormRef" :rules="rulesAddSentence" :model="sentence" label-width="100px" v-if="albuminfo != null">
         <el-form-item prop="sentenceTxt" label="句子">
           <el-input v-model="sentence.sentenceTxt"></el-input>
         </el-form-item>
@@ -165,11 +165,12 @@ export default {
       dialogTableVisible: false, // 添加用户弹框
       // 添加句子
       addSentence: {
-        sentence_txt: '',
-        author_name: '',
+        sentenceTxt: '',
+        authorName: '',
+
       },
       // 验证规则
-      rulesAddUser: {
+      rulesAddSentence: {
         sentenceTxt: [
           { required: true, message: '句子不能为空', trigger: 'blur' }
         ],
@@ -234,21 +235,6 @@ export default {
         };
     },
     getAlbumInfo:function(){
-      // 获取数据
-      // this.$http.get("http://localhost:3000/album?album_id=" + this.$route.params.albumid).then(response => {
-      //   // 响应成功回调
-      //   // 打印获取到的数据
-      //   console.log(response);
-      //   // 把数据赋值给customers
-      //   this.albuminfo = response.data;
-      //   console.log(this.albuminfo);
-
-      // }),
-      //   function(response) {
-      //     // 响应错误回调
-      //     alert("数据error");
-      //   };
-
 
       this.$http.post("/api/selectalbumbyid?albumId=" + Number(this.$route.params.albumid)).then(response => {
         // 响应成功回调
@@ -256,7 +242,6 @@ export default {
         console.log(response);
         // 把数据赋值给customers
         
-
         Date.prototype.toLocaleString = function() {
         // 补0   例如 2018/7/10 14:7:2  补完后为 2018/07/10 14:07:02
         function addZero(num) {
@@ -271,8 +256,6 @@ export default {
         };
 
         var date = new Date(response.data.createDate);
-
-
         this.albuminfo = response.data;
 
         this.albuminfo.createDate = date.toLocaleString();
@@ -286,8 +269,6 @@ export default {
           // 响应错误回调
           alert("数据error");
         };
-
-
 
     },
      writer:function(num){
@@ -308,19 +289,27 @@ export default {
       
       this.$refs.addFormRef.validate(async valid => {
         if (!valid) return null;  // 如果验证失败就不往下继续执行
-        // let user = JSON.parse(this.$store.state.user); // 从vuex取用户信息
-
-        // let newSentence = {
-        //     sentence_txt : this.addSentence.sentence_txt,
-        //     author_name : this.addSentence.author_name,
-        //     user_id : user.user_id,
-        //     album_id : this.$route.params.albumid,
-        //     classfiy_id : this.$route.params.classifyid
-        // }
-
-        // console.log(newSentence);
 
         console.log(this.sentence);
+
+        this.$http.post("/api/addsentence",this.sentence,{
+        headers: {
+            'Content-Type':'application/json;charset=UTF-8'
+        }
+
+        }).then(response => {
+          console.log(response.data);
+          this.$message.success(response.data.message)
+          this.dialogTableVisible = false  // 关闭弹框
+          this.$refs.addFormRef.resetFields() // 清空表单
+          //this.getUserList() // 重新调用，刷新表单
+
+        }),
+        function(response) {
+          // 响应错误回调
+          alert("未知错误");
+
+        };
 
 
         // const { data: res } = await this.$http.post('http://localhost:3000/sentence', newSentence)
