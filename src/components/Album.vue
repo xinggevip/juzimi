@@ -5,16 +5,16 @@
     <!-- <Header></Header> -->
 
         
-                <div class="both mdui-hidden-md-up">
-                  <div class="zuotu" style="height:100%;width:30%;background-color:red;float:left;box-sizing:border-box;">
+                <div class="both mdui-hidden-md-up" v-if="albuminfo != null">
+                  <div class="zuotu" style="height:100%;width:30%;background-color:red;float:left;box-sizing:border-box;" v-bind:style="{ 'background-image': 'url(' + albuminfo.albumPicture + ')'}">
                       
                   </div>
 
                   <div class="right" style="width:70%;height:100%;float:left;box-sizing:border-box;position: relative;">
-                    <b style="padding:10px;position: absolute;top:0px;">夺命狙击</b>
+                    <b style="padding:10px;position: absolute;top:0px;">{{albuminfo.albumName}}</b>
                     <p style="padding:10px;padding-bottom:0px;position: absolute;bottom:0px;line-height:20px;font-size: 13px;">
-                        此专辑由<a href="javascript:;">小红</a>创建<br>
-                        时间为2019年9月27日 <br>
+                        此专辑由<a href="javascript:;">{{albuminfo.userId}}</a>创建<br>
+                        时间为{{albuminfo.createDate}} <br>
                         共有100个句子
                     </p>
                       
@@ -84,13 +84,13 @@
 
         </div>
 
-        <div class="mdui-col-md-3 you mdui-hidden-sm-down" v-if="albuminfo.length != 0">
-          <div class="zhu"></div>
-          <span class="title"><b>{{albuminfo[0].album_name}}</b></span>
+        <div class="mdui-col-md-3 you mdui-hidden-sm-down" v-if="albuminfo != null">
+          <div class="zhu" v-bind:style="{ 'background-image': 'url(' + albuminfo.albumPicture + ')'}"></div>
+          <span class="title"><b>{{albuminfo.albumName}}</b></span>
           <div style="line-height:20px;font-size: 13px;">
-              此专辑由<a href="javascript:;">小红</a>创建
+              此专辑由<a href="javascript:;">{{albuminfo.userId}}</a>创建
             <br>
-            <span>时间为2019年9月27日</span>
+            <span>时间为{{albuminfo.createDate}}</span>
             <br>
             <span>
               共有100个句子
@@ -100,7 +100,7 @@
             <b style="line-height:30px;" class="mdui-text-color-black-secondary">简介</b>
             <br>
             <span class="mdui-text-color-black-disabled" style="text-indent:2em;">
-              {{albuminfo[0].album_details}}
+              {{albuminfo.albumDetails}}
             </span>
             
           </div>
@@ -121,7 +121,7 @@
     >
     <!-- 添加句子的表单 -->
       <!-- <el-form ref="addFormRef" :rules="rulesAddUser" :model="sentence" label-width="100px" v-if="albuminfo.length != 0"> -->
-      <el-form ref="addFormRef" :rules="rulesAddUser" :model="sentence" label-width="100px" v-if="albuminfo.length != 0">
+      <el-form ref="addFormRef" :rules="rulesAddUser" :model="sentence" label-width="100px" v-if="albuminfo != null">
         <el-form-item prop="sentenceTxt" label="句子">
           <el-input v-model="sentence.sentenceTxt"></el-input>
         </el-form-item>
@@ -129,7 +129,7 @@
           <el-input v-model="sentence.authorName"></el-input>
         </el-form-item>
         <el-form-item  label="专辑">
-          <el-input v-model="albuminfo[0].album_name" :disabled="true"></el-input>
+          <el-input v-model="albuminfo.albumName" :disabled="true"></el-input>
         </el-form-item>
         <el-form-item>
           <el-button @click="dialogTableVisible = false">取消</el-button>
@@ -160,7 +160,7 @@ export default {
       customers: [],
       more:[],
       load:true,
-      albuminfo:[],
+      albuminfo:null,
       dialogWidth: "0px", // 屏幕宽度
       dialogTableVisible: false, // 添加用户弹框
       // 添加句子
@@ -235,12 +235,50 @@ export default {
     },
     getAlbumInfo:function(){
       // 获取数据
-      this.$http.get("http://localhost:3000/album?album_id=" + this.$route.params.albumid).then(response => {
+      // this.$http.get("http://localhost:3000/album?album_id=" + this.$route.params.albumid).then(response => {
+      //   // 响应成功回调
+      //   // 打印获取到的数据
+      //   console.log(response);
+      //   // 把数据赋值给customers
+      //   this.albuminfo = response.data;
+      //   console.log(this.albuminfo);
+
+      // }),
+      //   function(response) {
+      //     // 响应错误回调
+      //     alert("数据error");
+      //   };
+
+
+      this.$http.post("/api/selectalbumbyid?albumId=" + Number(this.$route.params.albumid)).then(response => {
         // 响应成功回调
         // 打印获取到的数据
         console.log(response);
         // 把数据赋值给customers
+        
+
+        Date.prototype.toLocaleString = function() {
+        // 补0   例如 2018/7/10 14:7:2  补完后为 2018/07/10 14:07:02
+        function addZero(num) {
+            if(num<10)
+                return "0" + num;
+            return num;
+        }
+        // 按自定义拼接格式返回
+            return this.getFullYear() + "年" + addZero(this.getMonth() + 1) + "月" + addZero(this.getDate()) + "日"
+            //  + addZero(this.getHours()) + ":" + addZero(this.getMinutes()) + ":" + addZero(this.getSeconds())
+             ;
+        };
+
+        var date = new Date(response.data.createDate);
+
+
         this.albuminfo = response.data;
+
+        this.albuminfo.createDate = date.toLocaleString();
+        this.albuminfo.albumPicture   = this.$global.globalPictureUrl + this.albuminfo.albumPicture;
+
+        console.log(typeof this.albuminfo);
         console.log(this.albuminfo);
 
       }),
@@ -248,6 +286,9 @@ export default {
           // 响应错误回调
           alert("数据error");
         };
+
+
+
     },
      writer:function(num){
       // this.$$.alert("写句子");
@@ -362,7 +403,7 @@ export default {
   // background-color:blue;
   overflow: hidden;
   border-radius: 5px;
-  background-image:url('https://r1.ykimg.com/050E00005D897465ADA7B257BF0B7D07?x-oss-process=image/resize,w_290/interlace,1/quality,Q_80/sharpen,100');
+  // background-image:url('https://r1.ykimg.com/050E00005D897465ADA7B257BF0B7D07?x-oss-process=image/resize,w_290/interlace,1/quality,Q_80/sharpen,100');
   background-repeat:no-repeat;
   background-size:cover;
   background-position: center;
@@ -393,7 +434,7 @@ export default {
   box-sizing:border-box;
 }
 .zuotu{
-  background-image:url('https://r1.ykimg.com/050E00005D897465ADA7B257BF0B7D07?x-oss-process=image/resize,w_290/interlace,1/quality,Q_80/sharpen,100');
+  // background-image:url('https://r1.ykimg.com/050E00005D897465ADA7B257BF0B7D07?x-oss-process=image/resize,w_290/interlace,1/quality,Q_80/sharpen,100');
   background-repeat:no-repeat;
   // background-size:auto 100%;
   background-size:cover;
