@@ -25,8 +25,11 @@
       </div>
 
     <div class="mdui-row">
+
+        <!-- 没有数据了 -->
+        <p v-if="!next" class="nulldata">——我是有底线的——</p>
       
-        <button v-if="!load" class="mdui-btn mdui-btn-raised mdui-ripple mdui-center" v-on:click="onload()">点击加载更多</button>
+        <button v-if="next && !load" class="mdui-btn mdui-btn-raised mdui-ripple mdui-center" v-on:click="onload()">点击加载更多</button>
 
         <!-- load -->
         <div v-if="load" class="mdui-spinner mdui-center"><div class="mdui-spinner-layer "><div class="mdui-spinner-circle-clipper mdui-spinner-left"><div class="mdui-spinner-circle"></div></div><div class="mdui-spinner-gap-patch"><div class="mdui-spinner-circle"></div></div><div class="mdui-spinner-circle-clipper mdui-spinner-right"><div class="mdui-spinner-circle"></div></div></div></div>
@@ -56,7 +59,14 @@ export default {
     return {
       albums: [],
       load:true,
-      more:[]
+      more:[],
+      next:false,
+      // 请求参数  1.分类id  2.从第几页开始查 3.查多少条记录
+      albumRequestByAuto:{
+          classifyId:Number(this.$route.params.classifyid),
+          pageNum:1,
+          pageSize:3
+      }
     };
   },
 
@@ -68,6 +78,7 @@ export default {
     
   },
   methods: {
+    
     // Get数据
     fetchCustomers() {
       // this.$http.get("http://localhost:3000/album").then(response => {
@@ -83,11 +94,37 @@ export default {
       //     // 响应错误回调
       //   };
 
-        this.$http.post("/api/getalbumsbyclassifyid?classifyid="+this.$route.params.classifyid).then(response => {
+
+
+      //   this.$http.post("/api/getalbumsbyclassifyid?classifyid="+this.$route.params.classifyid).then(response => {
+      //   // 响应成功回调
+      //   // 打印获取到的数据
+      //   console.log(response.data);
+      //   let arr = response.data;
+      //   arr.forEach((item, index) => {
+      //     item.albumPicture = this.$global.globalPictureUrl + item.albumPicture;
+      //     // console.log(item);
+      //     this.albums.push(item);
+      //   })
+      //   this.load = false;
+      // }),
+      //   function(response) {
+      //     // 响应错误回调
+      //   };
+
+      console.log(this.albumRequestByAuto);
+      this.$http.post("/api/autogetalbums",this.albumRequestByAuto,{
+        headers: {
+            'Content-Type':'application/json;charset=UTF-8'
+        }
+
+      }).then(response => {
         // 响应成功回调
         // 打印获取到的数据
         console.log(response.data);
-        let arr = response.data;
+        // 赋值
+        let arr = response.data.albumList;
+        this.next = response.data.next;
         arr.forEach((item, index) => {
           item.albumPicture = this.$global.globalPictureUrl + item.albumPicture;
           // console.log(item);
@@ -97,6 +134,7 @@ export default {
       }),
         function(response) {
           // 响应错误回调
+          alert("未知错误");
         };
 
 
@@ -133,12 +171,40 @@ export default {
       // alert(typeof this.$route.params.classifyid);
       // alert(this.$route.params.classifyid);
       
-      this.$http.post("/api/getalbumsbyclassifyid?classifyid="+this.$route.params.classifyid).then(response => {
+      /* 根据分类id请求所有专辑列表，可用 */
+      // this.$http.post("/api/getalbumsbyclassifyid?classifyid="+this.$route.params.classifyid).then(response => {
+      //   // 响应成功回调
+      //   // 打印获取到的数据
+      //   console.log(response.data);
+      //   this.more = response.data;
+      //   this.more.forEach((item, index) => {
+      //     item.albumPicture = this.$global.globalPictureUrl + item.albumPicture;
+      //     // console.log(item);
+      //     this.albums.push(item);
+      //   })
+      //   this.load = false;
+      // }),
+      //   function(response) {
+      //     // 响应错误回调
+      //   };
+
+
+      // 请求一次  页码加一
+      this.albumRequestByAuto.pageNum = this.albumRequestByAuto.pageNum + 1;
+      console.log(this.albumRequestByAuto);
+      this.$http.post("/api/autogetalbums",this.albumRequestByAuto,{
+        headers: {
+            'Content-Type':'application/json;charset=UTF-8'
+        }
+
+      }).then(response => {
         // 响应成功回调
         // 打印获取到的数据
         console.log(response.data);
-        this.more = response.data;
-        this.more.forEach((item, index) => {
+        // 赋值
+        let arr = response.data.albumList;
+        this.next = response.data.next;
+        arr.forEach((item, index) => {
           item.albumPicture = this.$global.globalPictureUrl + item.albumPicture;
           // console.log(item);
           this.albums.push(item);
@@ -147,7 +213,14 @@ export default {
       }),
         function(response) {
           // 响应错误回调
+          alert("未知错误");
         };
+
+
+
+
+
+
     },
     // writer:function(num){
     //   // this.$$.alert(num);
@@ -212,5 +285,11 @@ export default {
   margin-bottom: 5px;
   // box-sizing:border-box;
   // padding: 10px;
+}
+.nulldata{
+  text-align: center;
+  color: #333;
+  line-height: 30px;
+
 }
 </style>
