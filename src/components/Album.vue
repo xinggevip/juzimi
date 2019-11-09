@@ -97,7 +97,7 @@
             <span>时间为{{albuminfo.createDate}}</span>
             <br>
             <span>
-              共有100个句子
+              共有{{sentenceCount}}个句子
             </span>
           </div>
           <div style="line-height:20px;" v-if="albuminfo != null">
@@ -163,6 +163,7 @@ import Footer from "@/components/Footer.vue";
 export default {
   data() {
     return {
+      sentenceCount:0,
       next:false,
       SentenceRequestByAuto:{
           albumId:Number(this.$route.params.albumid),
@@ -211,6 +212,20 @@ export default {
   },
 
   methods: {
+    // 统计该专辑下有多少条句子
+    selectsentencecount:function(){
+      //this.$http.post("/api/selectalbumbyid?albumId=" + Number(this.$route.params.albumid)).then(response => {
+        this.$http.post("/api/selectsentencecount?albumId=" + Number(this.$route.params.albumid)).then(response => {
+
+        console.log(response.data);
+        this.sentenceCount = response.data.sentenceCount;
+
+      }),
+        function(response) {
+          // 响应错误回调
+          alert("未知错误");
+        };
+    },
     //清空form
     clearForm:function(){
       this.sentence.authorName = '';
@@ -380,7 +395,8 @@ export default {
     }
   },
   created() {
-    this.$forceUpdate()
+    this.$forceUpdate();
+    this.selectsentencecount();
     this.fetchSentence();
     this.getAlbumInfo();
     console.log("分类id为："+this.$route.params.classifyid);
