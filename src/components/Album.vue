@@ -27,7 +27,7 @@
                   
                   <b class="mdui-text-color-black-secondary" style="font-size:15px">简介</b>
                   <br>
-                  <span class="mdui-text-color-black-disabled">
+                  <span class="mdui-text-color-black-disabled" style="font-size:14px;">
                     {{albuminfo.albumDetails}}
                   </span>
                   
@@ -103,7 +103,7 @@
           <div style="line-height:20px;" v-if="albuminfo != null">
             <b style="line-height:30px;" class="mdui-text-color-black-secondary">简介</b>
             <br>
-            <span class="mdui-text-color-black-disabled" style="text-indent:2em;">
+            <span class="mdui-text-color-black-disabled" style="text-indent:2em;font-size:14px;">
               {{albuminfo.albumDetails}}
             </span>
             

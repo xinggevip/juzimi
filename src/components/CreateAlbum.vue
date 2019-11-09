@@ -257,7 +257,7 @@ export default {
           setTimeout(() => {
             // 路由跳转elementui-对话框就报错，只能用原生跳转 操他妈的
             // this.$router.push({path:'/classify/'+ this.$route.params.classifyid +'/album/' + response.data.albumId});
-            this.$router.push({path:'/classify/'+ this.$route.params.classifyid +'/album/' + 6});
+            this.$router.push({path:'/classify/'+ this.$route.params.classifyid +'/album/' + response.data.albumId});
         
           }, 1000);
           // let url = 'http://localhost:8081/classify/' + this.$route.params.classifyid +'/album/' + response.data.albumId;

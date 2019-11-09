@@ -67,7 +67,7 @@ export default {
       albumRequestByAuto:{
           classifyId:Number(this.$route.params.classifyid),
           pageNum:1,
-          pageSize:3
+          pageSize:10
       }
     };
   },
