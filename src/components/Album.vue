@@ -42,30 +42,30 @@
     <div class="mdui-container">
       <div class="mdui-row">
         <div class="mdui-col-md-9">
-          <div class="mdui-row">
+          <div class="mdui-row" v-if="albuminfo != null">
 
             
 
-            <h3 v-if="customers.length == 0">什么都没有，赶快发布一个吧</h3>
+            <h3 v-if="sentenceList.length == 0">什么都没有，赶快发布一个句子吧</h3>
 
             
-            <div class="mdui-col-md-12" v-for="customer in customers" :key="customer.id">
+            <div class="mdui-col-md-12" v-for="sentence in sentenceList" :key="sentence.sentenceId" >
               <div class="list mdui-clearfix mdui-hoverable">
                 <div class="mdui-chip">
                   <span class="mdui-chip-icon mdui-color-blue">
                     <i class="mdui-icon material-icons">face</i>
                   </span>
-                  <span class="mdui-chip-title">{{customer.id}}</span>
+                  <span class="mdui-chip-title">{{sentence.userId}}</span>
                 </div>
                 <button class="mdui-btn mdui-btn-icon mdui-ripple mdui-float-right">
                   <i class="mdui-icon material-icons">favorite_border</i>
                 </button>
-                <p style="margin-bottom:20px;">{{customer.juzi}}</p>
+                <p style="margin-bottom:20px;">{{sentence.sentenceTxt}}</p>
                 <span class="mdui-float-right mdui-text-color-blue-900">
                   <a href="javascript:;" class="mdui-text-color-black-icon-disabled">
-                    <span style="letter-spacing:-3px;">———</span>&nbsp;&nbsp;{{customer.writer}}
+                    <span style="letter-spacing:-3px;">———</span>&nbsp;&nbsp;{{sentence.authorName}}
                   </a> &nbsp;&nbsp;
-                  <a href="javascript:;" class="mdui-text-color-black-secondary">《{{customer.from}}》</a>
+                  <a href="javascript:;" class="mdui-text-color-black-secondary">《{{albuminfo.albumName}}》</a>
                 </span>
               </div>
             </div>
@@ -75,7 +75,11 @@
           </div>
 
         <div class="mdui-row">
-            <button v-if="!load && customers.length != 0" class="mdui-btn mdui-btn-raised mdui-ripple mdui-center" v-on:click="onload()" >点击加载更多</button>
+
+          <!-- 没有数据了 -->
+          <p v-if="!next" class="nulldata">——我是有底线的——</p>
+
+            <button v-if="next && !load" class="mdui-btn mdui-btn-raised mdui-ripple mdui-center" v-on:click="onload()" >点击加载更多</button>
 
             <!-- load -->
             <div v-if="load" class="mdui-spinner mdui-center"><div class="mdui-spinner-layer "><div class="mdui-spinner-circle-clipper mdui-spinner-left"><div class="mdui-spinner-circle"></div></div><div class="mdui-spinner-gap-patch"><div class="mdui-spinner-circle"></div></div><div class="mdui-spinner-circle-clipper mdui-spinner-right"><div class="mdui-spinner-circle"></div></div></div></div>
@@ -120,23 +124,28 @@
       :width="dialogWidth"
     >
     <!-- 添加句子的表单 -->
-      <!-- <el-form ref="addFormRef" :rules="rulesAddUser" :model="sentence" label-width="100px" v-if="albuminfo.length != 0"> -->
-      <el-form ref="addFormRef" :rules="rulesAddSentence" :model="sentence" label-width="100px" v-if="albuminfo != null">
-        <el-form-item prop="sentenceTxt" label="句子">
-          <el-input v-model="sentence.sentenceTxt"></el-input>
-        </el-form-item>
-        <el-form-item prop="authorName" label="作者">
-          <el-input v-model="sentence.authorName"></el-input>
-        </el-form-item>
-        <el-form-item  label="专辑">
-          <el-input v-model="albuminfo.albumName" :disabled="true"></el-input>
-        </el-form-item>
-        <el-form-item>
-          <el-button @click="dialogTableVisible = false">取消</el-button>
-          <el-button type="primary" @click="onAddSentence">确定</el-button>
-        </el-form-item>
-      </el-form>
 
+      <form label-width="100px" v-if="albuminfo != null" v-on:submit="onAddSentence">
+        <div class="mdui-textfield mdui-textfield-floating-label">
+          <label class="mdui-textfield-label">句子</label>
+          <input class="mdui-textfield-input" type="text" v-model="sentence.sentenceTxt" required/>
+          <div class="mdui-textfield-error">句子不能为空</div>
+        </div>
+        <div class="mdui-textfield mdui-textfield-floating-label">
+          <label class="mdui-textfield-label">作者</label>
+          <input class="mdui-textfield-input" type="text" v-model="sentence.authorName" required/>
+          <div class="mdui-textfield-error">作者不能为空</div>
+        </div>
+        <!-- 禁用状态 -->
+        <div class="mdui-textfield">
+          <label class="mdui-textfield-label">专辑</label>
+          <input class="mdui-textfield-input" v-model="sentence.albumName" disabled style="color:#ccc"/>
+        </div>
+
+        <button class="mdui-btn mdui-btn-raised mdui-ripple" style="margin-right:5px;" type="button" @click="dialogTableVisible = false">取消</button>
+        <button class="mdui-btn mdui-btn-raised mdui-ripple mdui-color-theme " type="submit">发布</button>
+
+      </form>
 
     </el-dialog>
     
@@ -154,21 +163,25 @@ import Footer from "@/components/Footer.vue";
 export default {
   data() {
     return {
-      sentence:{
-        
+      next:false,
+      SentenceRequestByAuto:{
+          albumId:Number(this.$route.params.albumid),
+          pageNum:1,
+          pageSize:10
       },
-      customers: [],
+      // rulessentence:{},
+      sentence:{
+        albumName:'加载中',
+        sentenceTxt:'',
+        authorName:''
+
+      },
+      sentenceList: [],
       more:[],
       load:true,
       albuminfo:null,
       dialogWidth: "0px", // 屏幕宽度
       dialogTableVisible: false, // 添加用户弹框
-      // 添加句子
-      addSentence: {
-        sentenceTxt: '',
-        authorName: '',
-
-      },
       // 验证规则
       rulesAddSentence: {
         sentenceTxt: [
@@ -177,6 +190,9 @@ export default {
         authorName: [
           { required: true, message: '作者不能为空', trigger: 'blur' }
         ],
+        albumName:[
+          { required: true, message: '专辑不能为空', trigger: 'blur' }
+        ]
       }
     };
   },
@@ -195,44 +211,74 @@ export default {
   },
 
   methods: {
+    //清空form
+    clearForm:function(){
+      this.sentence.authorName = '';
+      this.sentence.sentenceTxt = '';
+    },
     // Get数据
-    fetchCustomers() {
-      this.$http.get("http://localhost:3000/juzi").then(response => {
+    fetchSentence() {
+
+      this.$http.post("/api/selectsentencebyalbumid",this.SentenceRequestByAuto,{
+        headers: {
+            'Content-Type':'application/json;charset=UTF-8'
+        }
+
+      }).then(response => {
         // 响应成功回调
         // 打印获取到的数据
-        console.log(response);
-        // 把数据赋值给customers
-        this.customers = response.data;
-        console.log(this.customers);
+        console.log(response.data);
+        this.sentenceList = response.data.sentenceList;
+        this.next = response.data.next;
         this.load = false;
       }),
         function(response) {
           // 响应错误回调
+          alert("未知错误");
+          this.load = false;
         };
+
+
+
+
     },
     onload:function(){
       // alert("hjk");
       this.load = true;
 
-      // 获取数据
-      this.$http.get("http://localhost:3000/juzimore").then(response => {
-        // 响应成功回调
-        // 打印获取到的数据
-        console.log(response);
-        // 把数据赋值给customers
-        this.more = response.data;
-        console.log(this.more);
+        this.SentenceRequestByAuto.pageNum = this.SentenceRequestByAuto.pageNum + 1;
+        console.log(this.SentenceRequestByAuto.pageNum);
+        this.$http.post("/api/selectsentencebyalbumid",this.SentenceRequestByAuto,{
+        headers: {
+            'Content-Type':'application/json;charset=UTF-8'
+        }
 
-        // 遍历数据
-        this.more.forEach((item, index) => {
-        
-        this.customers.push(item);
-        this.load = false;
-        })
-      }),
-        function(response) {
-          // 响应错误回调
-        };
+        }).then(response => {
+          // 响应成功回调
+          // 打印获取到的数据
+          console.log(response.data);
+          this.next = response.data.next;
+          let arr = response.data.sentenceList;
+          this.load = false;
+          arr.forEach((item, index) => {
+            // item.albumPicture = this.$global.globalPictureUrl + item.albumPicture;
+
+            //在这 改日期  
+            // console.log(item);
+            this.sentenceList.push(item);
+          })
+
+
+        }),
+          function(response) {
+            // 响应错误回调
+            alert("未知错误");
+            this.load = false;
+          };
+
+
+
+
     },
     getAlbumInfo:function(){
 
@@ -263,6 +309,7 @@ export default {
 
         console.log(typeof this.albuminfo);
         console.log(this.albuminfo);
+        this.sentence.albumName = this.albuminfo.albumName;
 
       }),
         function(response) {
@@ -281,27 +328,30 @@ export default {
     },
     // 关闭弹框的回调
     addDialogClose() {
-      this.$refs.addFormRef.resetFields() // 清空表单
+      this.clearForm();
     },
     // 点击添加句子
-    onAddSentence() {
-      
-      
-      this.$refs.addFormRef.validate(async valid => {
-        if (!valid) return null;  // 如果验证失败就不往下继续执行
-
-        console.log(this.sentence);
-
+    postSentence:function(){
         this.$http.post("/api/addsentence",this.sentence,{
         headers: {
             'Content-Type':'application/json;charset=UTF-8'
         }
 
         }).then(response => {
+          console.log("+++++++++++++++++++++++++++++");
+          console.log(this.sentence);
+          this.sentence.sentenceId = response.data.albumId;
+          this.sentenceList.unshift(this.sentence);
           console.log(response.data);
           this.$message.success(response.data.message)
+          // window.location.href=window.location.href;
+
+          this.SentenceRequestByAuto.pageNum = 1;
+          this.fetchSentence();
+
           this.dialogTableVisible = false  // 关闭弹框
-          this.$refs.addFormRef.resetFields() // 清空表单
+          // this.$refs.sentence.resetFields() // 清空表单
+          this.clearForm();
           //this.getUserList() // 重新调用，刷新表单
 
         }),
@@ -310,21 +360,12 @@ export default {
           alert("未知错误");
 
         };
-
-
-        // const { data: res } = await this.$http.post('http://localhost:3000/sentence', newSentence)
-        // if (res.meta.status !== 201) return this.$message.error(res.meta.msg)
-
-        // this.$http.post("http://localhost:3000/sentence",newSentence)
-        //             .then((response) =>{
-        //                 console.log(response);
-        //                 this.$message.success('添加成功')
-        //                 this.dialogTableVisible = false  // 关闭弹框
-        //                 this.$refs.addFormRef.resetFields() // 清空表单
-        //                 //this.getUserList() // 重新调用，刷新表单
-        //                 // this.$router.push({path:'/',query:{alert:"用户信息添加成功"}});
-        //             })
-      })
+    },
+    onAddSentence(e) {
+      this.postSentence();
+      // 阻止冒泡事件
+      e.preventDefault();
+      
     },
     // 设置对话框大小
     setDialogWidth() {
@@ -340,7 +381,7 @@ export default {
   },
   created() {
     this.$forceUpdate()
-    this.fetchCustomers();
+    this.fetchSentence();
     this.getAlbumInfo();
     console.log("分类id为："+this.$route.params.classifyid);
     console.log("专辑id为："+this.$route.params.albumid);

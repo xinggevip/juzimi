@@ -5,6 +5,8 @@
 
         <div class="mdui-row-xs-3 mdui-row-md-5">
 
+          <h3 v-if="albums.length == 0">什么都没有，赶快创建一个专辑吧</h3>
+
           <div class="mdui-col wbj" v-for="album in albums" :key="album.albumId">
             
             <router-link href="javascript:;" class="kuang"  v-bind:to="'/classify/'+ $route.params.classifyid +'/album/' + album.albumId">
