@@ -32,14 +32,16 @@
             <i class="mdui-icon material-icons">more_vert</i>
           </a>-->
         </div>
-        <div class="mdui-tab mdui-color-theme" mdui-tab="options">
-          <router-link href="#example3-tab1" class="mdui-ripple mdui-ripple-white" to="/">首页</router-link>
-          <router-link href="#example3-tab1" class="mdui-ripple mdui-ripple-white" v-bind:to="'/classify/' + 1">电影</router-link>
-          <router-link href="#example3-tab1" class="mdui-ripple mdui-ripple-white" v-bind:to="'/classify/' + 2">电视剧</router-link>
-          <router-link href="#example3-tab1" class="mdui-ripple mdui-ripple-white" v-bind:to="'/classify/' + 3">动漫</router-link>
-          <router-link href="#example3-tab1" class="mdui-ripple mdui-ripple-white" v-bind:to="'/classify/' + 4">小说</router-link>
-          <router-link href="#example3-tab1" class="mdui-ripple mdui-ripple-white" v-bind:to="'/classify/' + 5">书籍</router-link>
-          <router-link href="#example3-tab1" class="mdui-ripple mdui-ripple-white" v-bind:to="'/classify/' + 6">名人名言</router-link>
+        <!-- <div class="mdui-tab mdui-color-theme" mdui-tab> -->
+        <div class="mdui-tab mdui-color-theme" >
+          <!-- class="mdui-ripple mdui-ripple-white -->
+          <router-link href="#example3-tab1" v-bind:class="{'mdui-ripple':true,'mdui-ripple-white':true,'mdui-tab-active':$route.path == '/'} " to="/">首页</router-link>
+          <router-link href="#example3-tab1" v-bind:class="{'mdui-ripple':true,'mdui-ripple-white':true,'mdui-tab-active':$route.params.classifyid == '1'}" v-bind:to="'/classify/' + 1">电影</router-link>
+          <router-link href="#example3-tab1" v-bind:class="{'mdui-ripple':true,'mdui-ripple-white':true,'mdui-tab-active':$route.params.classifyid == '2'}" v-bind:to="'/classify/' + 2">电视剧</router-link>
+          <router-link href="#example3-tab1" v-bind:class="{'mdui-ripple':true,'mdui-ripple-white':true,'mdui-tab-active':$route.params.classifyid == '3'}" v-bind:to="'/classify/' + 3">动漫</router-link>
+          <router-link href="#example3-tab1" v-bind:class="{'mdui-ripple':true,'mdui-ripple-white':true,'mdui-tab-active':$route.params.classifyid == '4'}" v-bind:to="'/classify/' + 4">小说</router-link>
+          <router-link href="#example3-tab1" v-bind:class="{'mdui-ripple':true,'mdui-ripple-white':true,'mdui-tab-active':$route.params.classifyid == '5'}" v-bind:to="'/classify/' + 5">书籍</router-link>
+          <router-link href="#example3-tab1" v-bind:class="{'mdui-ripple':true,'mdui-ripple-white':true,'mdui-tab-active':$route.params.classifyid == '6'}" v-bind:to="'/classify/' + 6">名人名言</router-link>
         </div>
       </div>
     </header>
@@ -121,6 +123,7 @@ export default {
     // var inst = new mdui.Tab('#tab');
     // // 刷新网页选项卡选中电影选项
     // inst.show('tab2');
+    // alert(this.$route.path);
   },
   methods: {
     toprofile:function(url){
