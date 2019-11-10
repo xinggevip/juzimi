@@ -150,6 +150,19 @@
       </form>
 
     </el-dialog>
+
+
+    <el-dialog
+      title="提示"
+      :visible.sync="dialogVisible"
+      :width="dialogWidth"
+      >
+      <span>登陆后再发布</span>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="tologn">去登陆</el-button>
+      </span>
+    </el-dialog>
     
     
     
@@ -184,7 +197,8 @@ export default {
       load:true,
       albuminfo:null,
       dialogWidth: "0px", // 屏幕宽度
-      dialogTableVisible: false, // 添加用户弹框
+      dialogTableVisible: false, // 添加句子弹框
+      dialogVisible: false,
       // 验证规则
       rulesAddSentence: {
         sentenceTxt: [
@@ -215,8 +229,16 @@ export default {
 
   methods: {
     // 登陆后再发布
+    
     pleaselogin:function(){
-      this.$$.alert("请登陆后再发布句子");
+      // this.$$.alert("请登陆后再发布句子");
+      this.dialogVisible = true;
+      var inst = new this.$$.Drawer('#content-drawer');
+      inst.close();
+      
+    },
+    tologn:function(){
+      this.$router.push("/login");
     },
     // 统计该专辑下有多少条句子
     selectsentencecount:function(){

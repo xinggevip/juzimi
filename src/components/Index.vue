@@ -24,7 +24,7 @@
                   <a href="javascript:;" class="mdui-text-color-black-icon-disabled">
                     <span style="letter-spacing:-3px;">———</span>&nbsp;&nbsp;{{sen.authorName}}
                   </a> &nbsp;&nbsp;
-                  <a href="javascript:;" class="mdui-text-color-black-secondary">《{{sen.albumName}}》</a>
+                  <router-link href="javascript:;" class="mdui-text-color-black-secondary" v-bind:to="'/classify/'+ sen.classfiyId +'/album/' + sen.albumId">《{{sen.albumName}}》</router-link>
                 </span>
               </div>
             </div>
