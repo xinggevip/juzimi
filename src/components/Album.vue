@@ -49,21 +49,22 @@
             <h3 v-if="sentenceList.length == 0">什么都没有，赶快发布一个句子吧</h3>
 
             
-            <div class="mdui-col-md-12" v-for="sentence in sentenceList" :key="sentence.sentenceId" >
+            <div class="mdui-col-md-12" v-for="sen in sentenceList" :key="sen.sentenceId" >
               <div class="list mdui-clearfix mdui-hoverable">
                 <div class="mdui-chip">
                   <span class="mdui-chip-icon mdui-color-blue">
                     <i class="mdui-icon material-icons">face</i>
                   </span>
-                  <span class="mdui-chip-title">{{sentence.userId}}</span>
+                  <span class="mdui-chip-title">{{sen.userId}}</span>
                 </div>
                 <button class="mdui-btn mdui-btn-icon mdui-ripple mdui-float-right">
                   <i class="mdui-icon material-icons">favorite_border</i>
                 </button>
-                <p style="margin-bottom:20px;">{{sentence.sentenceTxt}}</p>
+                <p style="margin-bottom:23px;">{{sen.sentenceTxt}}</p>
+                <span class="mdui-float-left" style="font-size:13px;color:#ccc">{{sen.createDate}}</span>
                 <span class="mdui-float-right mdui-text-color-blue-900">
                   <a href="javascript:;" class="mdui-text-color-black-icon-disabled">
-                    <span style="letter-spacing:-3px;">———</span>&nbsp;&nbsp;{{sentence.authorName}}
+                    <span style="letter-spacing:-3px;">———</span>&nbsp;&nbsp;{{sen.authorName}}
                   </a> &nbsp;&nbsp;
                   <a href="javascript:;" class="mdui-text-color-black-secondary">《{{albuminfo.albumName}}》</a>
                 </span>
@@ -169,7 +170,7 @@ export default {
       SentenceRequestByAuto:{
           albumId:Number(this.$route.params.albumid),
           pageNum:1,
-          pageSize:10
+          pageSize:3
       },
       // rulessentence:{},
       sentence:{
@@ -238,7 +239,7 @@ export default {
     },
     // Get数据
     fetchSentence() {
-
+      this.sentenceList = [];
       this.$http.post("/api/selectsentencebyalbumid",this.SentenceRequestByAuto,{
         headers: {
             'Content-Type':'application/json;charset=UTF-8'
@@ -248,7 +249,32 @@ export default {
         // 响应成功回调
         // 打印获取到的数据
         console.log(response.data);
-        this.sentenceList = response.data.sentenceList;
+        
+        Date.prototype.toLocaleString = function() {
+        // 补0   例如 2018/7/10 14:7:2  补完后为 2018/07/10 14:07:02
+        function addZero(num) {
+            if(num<10)
+                return "0" + num;
+            return num;
+        }
+        // 按自定义拼接格式返回
+            return this.getFullYear() + "年" + addZero(this.getMonth() + 1) + "月" + addZero(this.getDate()) + "日"
+            //  + addZero(this.getHours()) + ":" + addZero(this.getMinutes()) + ":" + addZero(this.getSeconds())
+             ;
+        };
+
+        (response.data.sentenceList).forEach((item, index) => {
+            // item.albumPicture = this.$global.globalPictureUrl + item.albumPicture;
+            var date = new Date(item.createDate);
+            item.createDate = date.toLocaleString();
+            //在这 改日期  
+            // console.log(item);
+            this.sentenceList.push(item);
+          })
+
+
+
+        // this.sentenceList = response.data.sentenceList;
         this.next = response.data.next;
         this.load = false;
       }),
@@ -277,6 +303,20 @@ export default {
           // 响应成功回调
           // 打印获取到的数据
           console.log(response.data);
+
+          Date.prototype.toLocaleString = function() {
+        // 补0   例如 2018/7/10 14:7:2  补完后为 2018/07/10 14:07:02
+        function addZero(num) {
+            if(num<10)
+                return "0" + num;
+            return num;
+        }
+        // 按自定义拼接格式返回
+            return this.getFullYear() + "年" + addZero(this.getMonth() + 1) + "月" + addZero(this.getDate()) + "日"
+            //  + addZero(this.getHours()) + ":" + addZero(this.getMinutes()) + ":" + addZero(this.getSeconds())
+             ;
+        };
+
           this.next = response.data.next;
           let arr = response.data.sentenceList;
           this.load = false;
@@ -284,6 +324,10 @@ export default {
             // item.albumPicture = this.$global.globalPictureUrl + item.albumPicture;
 
             //在这 改日期  
+
+            var date = new Date(item.createDate);
+            item.createDate = date.toLocaleString();
+
             // console.log(item);
             this.sentenceList.push(item);
           })
@@ -327,7 +371,7 @@ export default {
         this.albuminfo.createDate = date.toLocaleString();
         this.albuminfo.albumPicture   = this.$global.globalPictureUrl + this.albuminfo.albumPicture;
 
-        console.log(typeof this.albuminfo);
+        // console.log(typeof this.albuminfo);
         console.log(this.albuminfo);
         this.sentence.albumName = this.albuminfo.albumName;
 
