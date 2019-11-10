@@ -113,7 +113,8 @@
       </div>
     </div>
     <!-- 发布新句子 -->
-    <button class="mdui-fab mdui-fab-fixed mdui-color-theme" v-on:click="writer()"><i class="mdui-icon material-icons">add</i></button>
+    <button v-if="sentence.userId != null" class="mdui-fab mdui-fab-fixed mdui-color-theme" v-on:click="writer()"><i class="mdui-icon material-icons">add</i></button>
+    <button v-if="sentence.userId == null" class="mdui-fab mdui-fab-fixed mdui-color-theme" v-on:click="pleaselogin"><i class="mdui-icon material-icons">add</i></button>
     <Footer></Footer>
     <!-- 添加句子弹框 -->
     <el-dialog
@@ -212,6 +213,10 @@ export default {
   },
 
   methods: {
+    // 登陆后再发布
+    pleaselogin:function(){
+      this.$$.alert("请登陆后再发布句子");
+    },
     // 统计该专辑下有多少条句子
     selectsentencecount:function(){
       //this.$http.post("/api/selectalbumbyid?albumId=" + Number(this.$route.params.albumid)).then(response => {
@@ -405,8 +410,13 @@ export default {
     this.setDialogWidth();
     // 把值传递给句子对象
     // let sysuser = JSON.parse(this.$store.state.user);
-
-    this.sentence.userId = (JSON.parse(this.$store.state.user)).userId;
+    // alert(this.$store.state.user);
+    if(this.$store.state.user == null){
+      this.sentence.userId = null;
+    }else{
+      this.sentence.userId = (JSON.parse(this.$store.state.user)).userId;
+    }
+    
     this.sentence.classfiyId = this.$route.params.classifyid;
     this.sentence.albumId = this.$route.params.albumid;
     // 可以获取到全局图片地址
