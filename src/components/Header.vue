@@ -15,7 +15,9 @@
             <i class="mdui-icon material-icons">search</i>
           </a>
           <a href="javascript:;" class="mdui-btn mdui-btn-icon" id="isopen" v-on:click="tologin()">
-            <i class="mdui-icon material-icons">account_circle</i>
+            <i v-if="user == null" class="mdui-icon material-icons">account_circle</i>
+            <!-- <div class="tu mdui-hoverable" v-bind:style="{ 'background-image': 'url(' + album.albumPicture + ')'}"> -->
+            <img v-if="user != null" class="mdui-icon material-icons mdui-img-circle" v-bind:src="user.userPicture"/>
           </a>
           
           <!-- 菜单 -->
@@ -32,8 +34,8 @@
             <i class="mdui-icon material-icons">more_vert</i>
           </a>-->
         </div>
-        <!-- <div class="mdui-tab mdui-color-theme" mdui-tab> -->
-        <div class="mdui-tab mdui-color-theme" >
+        <div class="mdui-tab mdui-color-theme" mdui-tab>
+        <!-- <div class="mdui-tab mdui-color-theme" > -->
           <!-- class="mdui-ripple mdui-ripple-white -->
           <router-link href="#example3-tab1" v-bind:class="{'mdui-ripple':true,'mdui-ripple-white':true,'mdui-tab-active':$route.path == '/'} " to="/">首页</router-link>
           <router-link href="#example3-tab1" v-bind:class="{'mdui-ripple':true,'mdui-ripple-white':true,'mdui-tab-active':$route.params.classifyid == '1'}" v-bind:to="'/classify/' + 1">电影</router-link>
@@ -54,7 +56,7 @@
           <!-- <img src="https://1.bp.blogspot.com/-imPGeN0jP9E/XTFp85B05bI/AAAAAAAAIkw/YhlOmhgZ_i0_0i7l5M1Jx_JBOhiw9pOIwCKgBGAs/w914-h514-p-k-no-nu/snow-mountain-night-landscape-minimalist-digital-art-uhdpaper.com-4K-50-wp.thumbnail.jpg" height="150xp;"/> -->
           <div class="mdui-card-media-covered ">
             <div class="mdui-card-primary">
-              <div v-if="token" class="mdui-card-primary-title">{{user.userId}}</div>
+              <div v-if="token" class="mdui-card-primary-title">{{user.userId}} <span style="color:red">{{ getUserActive() }}</span> </div>
               <div v-if="token == null" class="mdui-card-primary-title">未登录</div>
               <div v-if="token" class="mdui-card-primary-subtitle" style="overflow: hidden;text-overflow: ellipsis;font-size:13px;padding-top:2px;" >{{user.userSlogan}}</div>
               <div v-if="token == null" class="mdui-card-primary-subtitle"><router-link to="/login" style="color:pink">登录</router-link> 使用全部功能</div>
@@ -110,7 +112,7 @@ export default {
   data() {
     return {
       token:this.$store.state.token,
-      user:JSON.parse(this.$store.state.user)
+      user:null,
 
     };
   },
@@ -120,12 +122,25 @@ export default {
   created() {
     // this.fetchCustomers();
     this.$$.mutation();
+    this.user = JSON.parse(this.$store.state.user);
+    if(this.$store.state.token != null){
+      this.user.userPicture = this.$global.globalPictureUrl + this.user.userPicture;
+    }
+    
+    // $global.globalPictureUrl + user.userPicture
     // var inst = new mdui.Tab('#tab');
     // // 刷新网页选项卡选中电影选项
     // inst.show('tab2');
     // alert(this.$route.path);
   },
   methods: {
+    getUserActive:function(){
+      if(this.user.isActive == 1){
+          return ""
+      }else{
+        return "未激活"
+      }
+    },
     toprofile:function(url){
       if(url != null){
         window.location.href="http://localhost:8080/profile/" + url;

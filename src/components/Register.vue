@@ -74,15 +74,16 @@ export default {
         console.log(typeof response.data);
         console.log(response.data);
 
-        if(response.data != ''){
+        if(response.data.state == 'success'){
 
           mdui.snackbar({
             message: '注册成功',
             position: 'right-bottom'
           });
-          setTimeout("javascript:location.href='http://localhost:8081/login'", 1000);
+          // setTimeout("javascript:location.href='http://localhost:8081/login'", 1000);
+          setTimeout("javascript:location.href='" + this.$global.localhostUrl +"'", 1000);
         }else{
-          alert("注册失败");
+          alert("用户名已存在，注册失败");
         }
         
       }),

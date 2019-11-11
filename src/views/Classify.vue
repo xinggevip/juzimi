@@ -41,7 +41,7 @@
     </div>
 
 
-    <button class="mdui-fab mdui-fab-fixed mdui-color-theme" v-on:click="tocreatealbum" ><i class="mdui-icon material-icons">add</i></button>
+    <button class="mdui-fab mdui-fab-fixed mdui-color-theme" v-on:click="tocreatealbum" style="z-index:9999" ><i class="mdui-icon material-icons">add</i></button>
     
 
 

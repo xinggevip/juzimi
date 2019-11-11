@@ -114,8 +114,12 @@
       </div>
     </div>
     <!-- 发布新句子 -->
-    <button v-if="sentence.userId != null" class="mdui-fab mdui-fab-fixed mdui-color-theme" v-on:click="writer()"><i class="mdui-icon material-icons">add</i></button>
-    <button v-if="sentence.userId == null" class="mdui-fab mdui-fab-fixed mdui-color-theme" v-on:click="pleaselogin"><i class="mdui-icon material-icons">add</i></button>
+    <button v-if="sentence.userId == null" class="mdui-fab mdui-fab-fixed mdui-color-theme" v-on:click="pleaselogin" style="z-index:9999"><i class="mdui-icon material-icons">add</i></button>
+    <button v-else-if="isActive == 0" class="mdui-fab mdui-fab-fixed mdui-color-theme" v-on:click="noActive()" style="z-index:9999"><i class="mdui-icon material-icons">add</i></button>
+    <button v-else class="mdui-fab mdui-fab-fixed mdui-color-theme" v-on:click="writer()" style="z-index:9999"><i class="mdui-icon material-icons">add</i></button>
+    
+    
+    
     <Footer></Footer>
     <!-- 添加句子弹框 -->
     <el-dialog
@@ -178,6 +182,7 @@ import Footer from "@/components/Footer.vue";
 export default {
   data() {
     return {
+      isActive:(JSON.parse(this.$store.state.user)).isActive,
       sentenceCount:0,
       next:false,
       SentenceRequestByAuto:{
@@ -228,6 +233,9 @@ export default {
   },
 
   methods: {
+    noActive:function(){
+      alert("账号未激活，无发布句子权限");
+    },
     // 登陆后再发布
     
     pleaselogin:function(){
@@ -477,7 +485,7 @@ export default {
     // 把值传递给句子对象
     // let sysuser = JSON.parse(this.$store.state.user);
     // alert(this.$store.state.user);
-    if(this.$store.state.user == null){
+    if(this.$store.state.token == null){
       this.sentence.userId = null;
     }else{
       this.sentence.userId = (JSON.parse(this.$store.state.user)).userId;

@@ -1,11 +1,13 @@
 <script>
-const globalPictureUrl='http://localhost:8080';
-const globalServerUrl='http://localhost:8080';
+const globalPictureUrl='//localhost:8080';
+const globalServerUrl='//localhost:8080';
+const localhostUrl = '//localhost:8081';
 let gclassfiyId = 0;
 export default
 {
 globalPictureUrl,
 globalServerUrl,
-gclassfiyId
+gclassfiyId,
+localhostUrl
 }
 </script>

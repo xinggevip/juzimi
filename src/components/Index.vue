@@ -13,6 +13,7 @@
                   <span class="mdui-chip-icon mdui-color-blue">
                     <i class="mdui-icon material-icons">face</i>
                   </span>
+                  <!-- <img class="mdui-chip-icon" src="//www.mdui.org/docs/assets/docs/img/avatar1.jpg"/> -->
                   <span class="mdui-chip-title">{{sen.userId}}</span>
                 </div>
                 <button class="mdui-btn mdui-btn-icon mdui-ripple mdui-float-right">
@@ -68,7 +69,7 @@
 
           </div>
 
-          <div class="zhu">
+          <!-- <div class="zhu">
             <div class="tjtitle" style="border-bottom:1px solid #ccc;padding-bottom:12px;padding-top:8px;">
                 <b>扫码体验移动端</b>
             </div>
@@ -76,7 +77,7 @@
                 <img src="https://www.qiangssvip.com/usr/uploads/2019/03/2801480982.jpg" alt="" style="width:100%;margin-top:2px;">
             </div>
             
-          </div>
+          </div> -->
 
         </div>
       </div>
