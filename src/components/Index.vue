@@ -10,14 +10,18 @@
             <div class="mdui-col-md-12" v-for="sen in sentenceList" :key="sen.sentenceId" >
               <div class="list mdui-clearfix mdui-hoverable">
                 <div class="mdui-chip">
-                  <span class="mdui-chip-icon mdui-color-blue">
+                  <!-- <span class="mdui-chip-icon mdui-color-blue">
                     <i class="mdui-icon material-icons">face</i>
-                  </span>
-                  <!-- <img class="mdui-chip-icon" src="//www.mdui.org/docs/assets/docs/img/avatar1.jpg"/> -->
+                  </span> -->
+                  <img class="mdui-chip-icon" v-bind:src="sen.userPicture"/>
                   <span class="mdui-chip-title">{{sen.userId}}</span>
                 </div>
-                <button class="mdui-btn mdui-btn-icon mdui-ripple mdui-float-right">
+                <button class="mdui-btn mdui-btn-icon mdui-ripple mdui-float-right" v-if="$store.state.token == null" v-on:click="pleaselogin">
                   <i class="mdui-icon material-icons">favorite_border</i>
+                </button>
+                <button class="mdui-btn mdui-btn-icon mdui-ripple mdui-float-right" v-else v-on:click="togglelike(sen.isLike)">
+                  <i v-if="sen.isLike == 1" class="mdui-icon material-icons mdui-text-color-pink">favorite_border{{sen.isLike}}</i>
+                  <i v-if="sen.isLike == 0" class="mdui-icon material-icons">favorite_border{{sen.isLike}}</i>
                 </button>
                 <p style="margin-bottom:23px;">{{sen.sentenceTxt}}</p>
                 <span class="mdui-float-left" style="font-size:13px;color:#ccc">{{sen.createDate}}</span>
@@ -38,7 +42,7 @@
             <!-- 没有数据了 -->
           <p v-if="!next" class="nulldata">——我是有底线的——</p>
 
-            <button v-if="next && !load" class="mdui-btn mdui-btn-raised mdui-ripple mdui-center" v-on:click="onload()" >点击加载更多</button>
+            <button v-if="next && !load" class="mdui-btn mdui-btn-raised mdui-ripple mdui-center" v-on:click="fetchSentence" >点击加载更多</button>
 
             <!-- load -->
             <div v-if="load" class="mdui-spinner mdui-center"><div class="mdui-spinner-layer "><div class="mdui-spinner-circle-clipper mdui-spinner-left"><div class="mdui-spinner-circle"></div></div><div class="mdui-spinner-gap-patch"><div class="mdui-spinner-circle"></div></div><div class="mdui-spinner-circle-clipper mdui-spinner-right"><div class="mdui-spinner-circle"></div></div></div></div>
@@ -101,11 +105,17 @@ export default {
       sentenceList:[],
       more:[],
       load:true,
-      SentenceRequestByAuto:{
-        albumId:-1,
-        pageNum:1,
-        pageSize:10
-      },
+      // SentenceRequestByAuto:{
+      //   albumId:-1,
+      //   pageNum:1,
+      //   pageSize:10
+      // },
+      RequestByFirstPageDate:{
+        "userId":'',
+        "pageNum":0,
+        "pageSize":10
+      }
+
     };
   },
   name: "home",
@@ -119,23 +129,25 @@ export default {
   },
 
   methods: {
+    // 已登录则进行toggle收藏操作
+    togglelike:function(isLike){
+      alert(isLike);
+      if(isLike == 1){
+        // 去取消收藏
+      }else{
+        // 去收藏
+      }
+    },
+    // 未登录情况下点击收藏提示去登录
+    pleaselogin:function(){
+      alert("未登录，请登陆后操作");
+    },
     // Get数据
     fetchSentence() {
-      // this.$http.get("http://localhost:3000/juzi").then(response => {
-      //   // 响应成功回调
-      //   // 打印获取到的数据
-      //   // console.log(response);
-      //   // 把数据赋值给customers
-      //   this.customers = response.data;
-      //   console.log(this.customers);
-      //   this.load = false;
-      // }),
-      //   function(response) {
-      //     // 响应错误回调
-      //   };
 
+      this.RequestByFirstPageDate.pageNum += 1;
 
-      this.$http.post("/api/selectallsentence",this.SentenceRequestByAuto,{
+      this.$http.post("/api/getfirstpagedata",this.RequestByFirstPageDate,{
         headers: {
             'Content-Type':'application/json;charset=UTF-8'
         }
@@ -157,8 +169,8 @@ export default {
              ;
         };
 
-        (response.data.sentenceProList).forEach((item, index) => {
-            // item.albumPicture = this.$global.globalPictureUrl + item.albumPicture;
+        (response.data.firstPageDataList).forEach((item, index) => {
+            item.userPicture = this.$global.globalPictureUrl + item.userPicture;
             var date = new Date(item.createDate);
             item.createDate = date.toLocaleString();
             //在这 改日期  
@@ -183,27 +195,6 @@ export default {
     onload:function(){
       // alert("hjk");
       this.load = true;
-
-      // // 获取数据
-      // this.$http.get("http://localhost:3000/juzimore").then(response => {
-      //   // 响应成功回调
-      //   // 打印获取到的数据
-      //   console.log(response);
-      //   // 把数据赋值给customers
-      //   this.more = response.data;
-      //   console.log(this.more);
-
-      //   // 遍历数据
-      //   this.more.forEach((item, index) => {
-        
-      //   this.customers.push(item);
-      //   this.load = false;
-      //   })
-      // }),
-      //   function(response) {
-      //     // 响应错误回调
-      //   };
-
 
 
       this.SentenceRequestByAuto.pageNum = this.SentenceRequestByAuto.pageNum + 1;
@@ -270,6 +261,11 @@ export default {
   },
   created() {
     this.fetchSentence();
+    // 给用户名赋值
+    if(this.$store.state.token){
+      this.RequestByFirstPageDate.userId = (JSON.parse(this.$store.state.user)).userId;
+    }
+    
   }
 };
 </script>
