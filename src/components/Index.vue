@@ -136,7 +136,41 @@ export default {
 
       if(isLike == 1){
         // 去取消收藏
-        alert("去取消收藏");
+        // alert("去取消收藏");
+        let Userlikesen = {
+          "userId":(JSON.parse(this.$store.state.user)).userId,
+          "sentenceId":sentenceId
+        };
+
+        this.$http.post("/api/tonolike",Userlikesen,{
+        headers: {
+            'Content-Type':'application/json;charset=UTF-8'
+        }
+
+      }).then(response => {
+        console.log(response.data);
+
+        this.sentenceList[index].isLike = 0;
+
+        if(response.data.success == true){
+          mdui.snackbar({
+            message: response.data.message,
+            position: 'right-bottom'
+          });
+          
+        }else{
+          mdui.snackbar({
+            message: response.data.message,
+            position: 'right-bottom'
+          });
+        }
+        
+      }),
+        function(response) {
+          // 响应错误回调
+          alert("未知错误");
+        };
+
       }else{
         // 去收藏
         let Userlikesen = {
