@@ -49,7 +49,7 @@
             <h3 v-if="sentenceList.length == 0">什么都没有，赶快发布一个句子吧</h3>
 
             
-            <div class="mdui-col-md-12" v-for="sen in sentenceList" :key="sen.sentenceId" >
+            <!-- <div class="mdui-col-md-12" v-for="sen in sentenceList" :key="sen.sentenceId" >
               <div class="list mdui-clearfix mdui-hoverable">
                 <div class="mdui-chip">
                   <span class="mdui-chip-icon mdui-color-blue">
@@ -69,8 +69,34 @@
                   <a href="javascript:;" class="mdui-text-color-black-secondary">《{{albuminfo.albumName}}》</a>
                 </span>
               </div>
-            </div>
+            </div> -->
 
+            <div class="mdui-col-md-12" v-for="(sen,index) in sentenceList" :key="sen.sentenceId" >
+              <div class="list mdui-clearfix mdui-hoverable">
+                <div class="mdui-chip">
+                  <!-- <span class="mdui-chip-icon mdui-color-blue">
+                    <i class="mdui-icon material-icons">face</i>
+                  </span> -->
+                  <img class="mdui-chip-icon" v-bind:src="sen.userPicture"/>
+                  <span class="mdui-chip-title">{{sen.userId}}</span>
+                </div>
+                <button class="mdui-btn mdui-btn-icon mdui-ripple mdui-float-right" v-if="$store.state.token == null" v-on:click="pleaselogin">
+                  <i class="mdui-icon material-icons">favorite_border</i>
+                </button>
+                <button class="mdui-btn mdui-btn-icon mdui-ripple mdui-float-right" v-else v-on:click="togglelike(sen.isLike,sen.sentenceId,index)">
+                  <i v-if="sen.isLike == 1" class="mdui-icon material-icons mdui-text-color-pink">favorite_border{{sen.isLike}}</i>
+                  <i v-if="sen.isLike == 0" class="mdui-icon material-icons">favorite_border{{sen.isLike}}</i>
+                </button>
+                <p style="margin-bottom:23px;">{{sen.sentenceTxt}}</p>
+                <span class="mdui-float-left" style="font-size:13px;color:#ccc">{{sen.createDate}}</span>
+                <span class="mdui-float-right mdui-text-color-blue-900">
+                  <a href="javascript:;" class="mdui-text-color-black-icon-disabled">
+                    <span style="letter-spacing:-3px;">———</span>&nbsp;&nbsp;{{sen.authorName}}
+                  </a> &nbsp;&nbsp;
+                  <router-link href="javascript:;" class="mdui-text-color-black-secondary" v-bind:to="'/classify/'+ sen.classfiyId +'/album/' + sen.albumId">《{{sen.albumName}}》</router-link>
+                </span>
+              </div>
+            </div>
             
             
           </div>
@@ -185,10 +211,16 @@ export default {
       isActive:0,
       sentenceCount:0,
       next:false,
-      SentenceRequestByAuto:{
+      // SentenceRequestByAuto:{
+      //     albumId:Number(this.$route.params.albumid),
+      //     pageNum:1,
+      //     pageSize:3
+      // },
+      RequestByFirstPageDate:{
+          userId:'',
           albumId:Number(this.$route.params.albumid),
           pageNum:1,
-          pageSize:3
+          pageSize:10
       },
       // rulessentence:{},
       sentence:{
@@ -222,6 +254,89 @@ export default {
   },
 
   methods: {
+    // 已登录则进行toggle收藏操作
+    togglelike:function(isLike,sentenceId,index){
+      let userId = (JSON.parse(this.$store.state.user)).userId;
+      // alert(isLike + "====" + sentenceId + "====" + userId + "=====" + index);
+
+      if(isLike == 1){
+        // 去取消收藏
+        // alert("去取消收藏");
+        let Userlikesen = {
+          "userId":(JSON.parse(this.$store.state.user)).userId,
+          "sentenceId":sentenceId
+        };
+
+        this.$http.post("/api/tonolike",Userlikesen,{
+        headers: {
+            'Content-Type':'application/json;charset=UTF-8'
+        }
+
+      }).then(response => {
+        console.log(response.data);
+
+        this.sentenceList[index].isLike = 0;
+
+        if(response.data.success == true){
+          mdui.snackbar({
+            message: response.data.message,
+            position: 'right-bottom'
+          });
+          
+        }else{
+          mdui.snackbar({
+            message: response.data.message,
+            position: 'right-bottom'
+          });
+        }
+        
+      }),
+        function(response) {
+          // 响应错误回调
+          alert("未知错误");
+        };
+
+      }else{
+        // 去收藏
+        let Userlikesen = {
+          "userId":(JSON.parse(this.$store.state.user)).userId,
+          "sentenceId":sentenceId
+        };
+
+        this.$http.post("/api/tolike",Userlikesen,{
+        headers: {
+            'Content-Type':'application/json;charset=UTF-8'
+        }
+
+      }).then(response => {
+        console.log(response.data);
+
+        this.sentenceList[index].isLike = 1;
+
+        if(response.data.success == true){
+          mdui.snackbar({
+            message: response.data.message,
+            position: 'right-bottom'
+          });
+          
+        }else{
+          mdui.snackbar({
+            message: response.data.message,
+            position: 'right-bottom'
+          });
+        }
+        
+      }),
+        function(response) {
+          // 响应错误回调
+          alert("未知错误");
+        };
+
+
+
+      }
+    },
+    // 未登录情况下点击收藏提示去登录
     noActive:function(){
       alert("账号未激活，无发布句子权限");
     },
@@ -258,17 +373,20 @@ export default {
     },
     // Get数据
     fetchSentence() {
+      this.load = true;
       this.sentenceList = [];
-      this.$http.post("/api/selectsentencebyalbumid",this.SentenceRequestByAuto,{
+      // this.RequestByFirstPageDate.pageNum += 1;
+      console.log("========================");
+      console.log(this.RequestByFirstPageDate);
+      this.$http.post("/api/getalbumpagedata",this.RequestByFirstPageDate,{
         headers: {
             'Content-Type':'application/json;charset=UTF-8'
         }
 
       }).then(response => {
         // 响应成功回调
-        // 打印获取到的数据
         console.log(response.data);
-        
+        // 遍历改日期
         Date.prototype.toLocaleString = function() {
         // 补0   例如 2018/7/10 14:7:2  补完后为 2018/07/10 14:07:02
         function addZero(num) {
@@ -282,8 +400,8 @@ export default {
              ;
         };
 
-        (response.data.sentenceList).forEach((item, index) => {
-            // item.albumPicture = this.$global.globalPictureUrl + item.albumPicture;
+        (response.data.firstPageDataList).forEach((item, index) => {
+            item.userPicture = this.$global.globalPictureUrl + item.userPicture;
             var date = new Date(item.createDate);
             item.createDate = date.toLocaleString();
             //在这 改日期  
@@ -295,15 +413,13 @@ export default {
 
         // this.sentenceList = response.data.sentenceList;
         this.next = response.data.next;
+        
+
         this.load = false;
       }),
         function(response) {
           // 响应错误回调
-          alert("未知错误");
-          this.load = false;
         };
-
-
 
 
     },
@@ -311,19 +427,18 @@ export default {
       // alert("hjk");
       this.load = true;
 
-        this.SentenceRequestByAuto.pageNum = this.SentenceRequestByAuto.pageNum + 1;
-        console.log(this.SentenceRequestByAuto.pageNum);
-        this.$http.post("/api/selectsentencebyalbumid",this.SentenceRequestByAuto,{
+      this.RequestByFirstPageDate.pageNum += 1;
+
+      this.$http.post("/api/getalbumpagedata",this.RequestByFirstPageDate,{
         headers: {
             'Content-Type':'application/json;charset=UTF-8'
         }
 
-        }).then(response => {
-          // 响应成功回调
-          // 打印获取到的数据
-          console.log(response.data);
-
-          Date.prototype.toLocaleString = function() {
+      }).then(response => {
+        // 响应成功回调
+        console.log(response.data);
+        // 遍历改日期
+        Date.prototype.toLocaleString = function() {
         // 补0   例如 2018/7/10 14:7:2  补完后为 2018/07/10 14:07:02
         function addZero(num) {
             if(num<10)
@@ -336,28 +451,26 @@ export default {
              ;
         };
 
-          this.next = response.data.next;
-          let arr = response.data.sentenceList;
-          this.load = false;
-          arr.forEach((item, index) => {
-            // item.albumPicture = this.$global.globalPictureUrl + item.albumPicture;
-
-            //在这 改日期  
-
+        (response.data.firstPageDataList).forEach((item, index) => {
+            item.userPicture = this.$global.globalPictureUrl + item.userPicture;
             var date = new Date(item.createDate);
             item.createDate = date.toLocaleString();
-
+            //在这 改日期  
             // console.log(item);
             this.sentenceList.push(item);
           })
 
 
-        }),
-          function(response) {
-            // 响应错误回调
-            alert("未知错误");
-            this.load = false;
-          };
+
+        // this.sentenceList = response.data.sentenceList;
+        this.next = response.data.next;
+        
+
+        this.load = false;
+      }),
+        function(response) {
+          // 响应错误回调
+        };
 
 
 
@@ -429,7 +542,7 @@ export default {
           this.$message.success(response.data.message)
           // window.location.href=window.location.href;
 
-          this.SentenceRequestByAuto.pageNum = 1;
+          this.RequestByFirstPageDate.pageNum = 1;
           this.fetchSentence();
 
           this.dialogTableVisible = false  // 关闭弹框
@@ -479,6 +592,7 @@ export default {
     }else{
       this.sentence.userId = (JSON.parse(this.$store.state.user)).userId;
       this.isActive = (JSON.parse(this.$store.state.user)).isActive;
+      this.RequestByFirstPageDate.userId = (JSON.parse(this.$store.state.user)).userId;
     }
     
     this.sentence.classfiyId = this.$route.params.classifyid;

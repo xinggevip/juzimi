@@ -217,7 +217,7 @@ export default {
     },
     // Get数据
     fetchSentence() {
-
+      this.load = true;
       this.RequestByFirstPageDate.pageNum += 1;
 
       this.$http.post("/api/getfirstpagedata",this.RequestByFirstPageDate,{
@@ -317,16 +317,6 @@ export default {
             alert("未知错误");
             this.load = false;
           };
-
-
-
-
-
-
-
-
-
-
 
 
 
