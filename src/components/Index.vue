@@ -7,7 +7,7 @@
         <div class="mdui-col-md-9">
           <div class="mdui-row">
             
-            <div class="mdui-col-md-12" v-for="sen in sentenceList" :key="sen.sentenceId" >
+            <div class="mdui-col-md-12" v-for="(sen,index) in sentenceList" :key="sen.sentenceId" >
               <div class="list mdui-clearfix mdui-hoverable">
                 <div class="mdui-chip">
                   <!-- <span class="mdui-chip-icon mdui-color-blue">
@@ -19,7 +19,7 @@
                 <button class="mdui-btn mdui-btn-icon mdui-ripple mdui-float-right" v-if="$store.state.token == null" v-on:click="pleaselogin">
                   <i class="mdui-icon material-icons">favorite_border</i>
                 </button>
-                <button class="mdui-btn mdui-btn-icon mdui-ripple mdui-float-right" v-else v-on:click="togglelike(sen.isLike)">
+                <button class="mdui-btn mdui-btn-icon mdui-ripple mdui-float-right" v-else v-on:click="togglelike(sen.isLike,sen.sentenceId,index)">
                   <i v-if="sen.isLike == 1" class="mdui-icon material-icons mdui-text-color-pink">favorite_border{{sen.isLike}}</i>
                   <i v-if="sen.isLike == 0" class="mdui-icon material-icons">favorite_border{{sen.isLike}}</i>
                 </button>
@@ -130,12 +130,51 @@ export default {
 
   methods: {
     // 已登录则进行toggle收藏操作
-    togglelike:function(isLike){
-      alert(isLike);
+    togglelike:function(isLike,sentenceId,index){
+      let userId = (JSON.parse(this.$store.state.user)).userId;
+      // alert(isLike + "====" + sentenceId + "====" + userId + "=====" + index);
+
       if(isLike == 1){
         // 去取消收藏
+        alert("去取消收藏");
       }else{
         // 去收藏
+        let Userlikesen = {
+          "userId":(JSON.parse(this.$store.state.user)).userId,
+          "sentenceId":sentenceId
+        };
+
+        this.$http.post("/api/tolike",Userlikesen,{
+        headers: {
+            'Content-Type':'application/json;charset=UTF-8'
+        }
+
+      }).then(response => {
+        console.log(response.data);
+
+        this.sentenceList[index].isLike = 1;
+
+        if(response.data.success == true){
+          mdui.snackbar({
+            message: response.data.message,
+            position: 'right-bottom'
+          });
+          
+        }else{
+          mdui.snackbar({
+            message: response.data.message,
+            position: 'right-bottom'
+          });
+        }
+        
+      }),
+        function(response) {
+          // 响应错误回调
+          alert("未知错误");
+        };
+
+
+
       }
     },
     // 未登录情况下点击收藏提示去登录
