@@ -182,7 +182,7 @@ import Footer from "@/components/Footer.vue";
 export default {
   data() {
     return {
-      isActive:(JSON.parse(this.$store.state.user)).isActive,
+      isActive:0,
       sentenceCount:0,
       next:false,
       SentenceRequestByAuto:{
@@ -205,17 +205,6 @@ export default {
       dialogTableVisible: false, // 添加句子弹框
       dialogVisible: false,
       // 验证规则
-      rulesAddSentence: {
-        sentenceTxt: [
-          { required: true, message: '句子不能为空', trigger: 'blur' }
-        ],
-        authorName: [
-          { required: true, message: '作者不能为空', trigger: 'blur' }
-        ],
-        albumName:[
-          { required: true, message: '专辑不能为空', trigger: 'blur' }
-        ]
-      }
     };
   },
   name: "album",
@@ -489,6 +478,7 @@ export default {
       this.sentence.userId = null;
     }else{
       this.sentence.userId = (JSON.parse(this.$store.state.user)).userId;
+      this.isActive = (JSON.parse(this.$store.state.user)).isActive;
     }
     
     this.sentence.classfiyId = this.$route.params.classifyid;
