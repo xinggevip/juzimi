@@ -48,7 +48,7 @@
                             <i class="mdui-icon material-icons">delete</i>
                         </button>
 
-                        <button class="mdui-btn mdui-btn-icon mdui-ripple mdui-float-right" v-if="isShow" >
+                        <button class="mdui-btn mdui-btn-icon mdui-ripple mdui-float-right" v-if="isShow" @click="writer(sen)">
                             <i class="mdui-icon material-icons">create</i>
                         </button>
                         
@@ -91,7 +91,38 @@
             </div>
             
 
+            <el-dialog
+                title="更新句子"
+                @close="addDialogClose"
+                :visible.sync="dialogTableVisible"
+                :close-on-click-modal="false"
+                :width="dialogWidth"
+                >
+                <!-- 添加句子的表单 -->
 
+                <form label-width="100px" v-if="sentence != null" v-on:submit="onAddSentence">
+                    <div class="mdui-textfield mdui-textfield-floating-label">
+                    <label class="mdui-textfield-label">句子</label>
+                    <input class="mdui-textfield-input" type="text" v-model="sentence.sentenceTxt" required/>
+                    <div class="mdui-textfield-error">句子不能为空</div>
+                    </div>
+                    <div class="mdui-textfield mdui-textfield-floating-label">
+                    <label class="mdui-textfield-label">作者</label>
+                    <input class="mdui-textfield-input" type="text" v-model="sentence.authorName" required/>
+                    <div class="mdui-textfield-error">作者不能为空</div>
+                    </div>
+                    <!-- 禁用状态 -->
+                    <div class="mdui-textfield">
+                    <label class="mdui-textfield-label">专辑</label>
+                    <input class="mdui-textfield-input" v-model="sentence.albumName" disabled style="color:#ccc"/>
+                    </div>
+
+                    <button class="mdui-btn mdui-btn-raised mdui-ripple" style="margin-right:5px;" type="button" @click="dialogTableVisible = false">取消</button>
+                    <button class="mdui-btn mdui-btn-raised mdui-ripple mdui-color-theme " type="submit">发布</button>
+
+                </form>
+
+            </el-dialog>
 
 
 
@@ -110,6 +141,8 @@ export default {
   name: "profile",
   data(){
       return{
+          sentence:null,
+          // 菜单是否显示
           isShow:false,
           load:false,
           next:false,
@@ -125,6 +158,10 @@ export default {
             "pageNum":0,
             "pageSize":10
           },
+          dialogWidth: "0px", // 屏幕宽度
+          dialogTableVisible: false, // 添加句子弹框
+          dialogVisible: false,
+
           
       }
   },
@@ -139,7 +176,8 @@ export default {
           if((JSON.parse(this.$store.state.user)).userId == this.$route.params.userid){
               this.isShow = true;
           }
-      }
+      };
+      this.setDialogWidth();
   },
   methods:{
       // 弹出菜单
@@ -201,6 +239,66 @@ export default {
       toback:function(){
         window.history.back(-1);
       },
+      
+
+      writer:function(sen){
+      // this.$$.alert("写句子");
+      this.dialogTableVisible = true;
+      this.sentence = sen;
+      console.log(sen);
+
+
+      
+
+    },
+    // 关闭弹框的回调
+    addDialogClose() {
+        // 清空表单
+    //   this.clearForm();
+    },
+    // 点击添加句子
+    postSentence:function(){
+        
+        delete this.sentence["albumName"];
+        delete this.sentence["classifyName"];
+        delete this.sentence["createDate"];
+        delete this.sentence["isLike"];
+
+
+        this.$http.post("/api/updatasen",this.sentence,{
+        headers: {
+            'Content-Type':'application/json;charset=UTF-8'
+        }
+
+        }).then(response => {
+            console.log(response.data);
+            this.$message.success(response.data.message)
+            this.dialogTableVisible = false  // 关闭弹框
+            // 提示
+        }),
+        function(response) {
+          // 响应错误回调
+          alert("未知错误");
+
+        };
+    },
+    onAddSentence(e) {
+      this.postSentence();
+      // 阻止冒泡事件
+      e.preventDefault();
+      
+    },
+    // 设置对话框大小
+    setDialogWidth() {
+      console.log(document.body.clientWidth)
+      var val = document.body.clientWidth
+      const def = 800 // 默认宽度
+      if (val < def) {
+        this.dialogWidth = '100%'
+      } else {
+        this.dialogWidth = def + 'px'
+      }
+    }
 
   }
 };
