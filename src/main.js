@@ -3,6 +3,8 @@ import Vuex from 'vuex'
 import App from './App.vue'
 import router from './router'
 import mdui from 'mdui'
+import MuseUI from 'muse-ui';
+import 'muse-ui/dist/muse-ui.css';
 import store from './store/store.js'
 import Global from './components/Global'
 // import 'assets/css/element.css'
@@ -17,8 +19,10 @@ Vue.prototype.$http = axios
 Vue.config.productionTip = false
 Vue.prototype.$$ = mdui
 Vue.prototype.$global = Global
+Vue.prototype.$muse = MuseUI
 
 Vue.use(ElementUI);
+Vue.use(MuseUI);
 // Vue.use(Global);
 
 

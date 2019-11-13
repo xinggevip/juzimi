@@ -40,3 +40,8 @@ export default {
 //   }
 // }
 </style>
+
+<style src="..\node_modules\mdui\dist\css\mdui.min.css"></style>
+<style src="..\node_modules\element-ui\lib\theme-chalk\index.css"></style>
+<style src="..\node_modules\muse-ui\dist\muse-ui.css"></style>
+

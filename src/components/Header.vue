@@ -23,7 +23,7 @@
           <!-- 菜单 -->
           <ul class="mdui-menu" id="menu">
           <li class="mdui-menu-item" v-on:click="tospace">
-            <a href="javascript:;" class="mdui-ripple">我的主页</a>
+            <a href="javascript:;" class="mdui-ripple" v-on:click.stop.prevent="toprofile(user.userId)">我的主页</a>
           </li>
           <li class="mdui-menu-item" v-on:click="signout">
             <a href="javascript:;" class="mdui-ripple">退出登录</a>
@@ -143,7 +143,7 @@ export default {
     },
     toprofile:function(url){
       if(url != null){
-        window.location.href="http://localhost:8080/profile/" + url;
+        window.location.href=this.$global.localhostUrl + "/profile/" + url;
       }
       
     },
