@@ -33,7 +33,7 @@
                 
                 <div class="mdui-row" style="background-color:#e8eaf6">
                 
-                    <div class="mdui-col-md-12" v-for="sen in sentenceList" :key="sen.sentenceId" >
+                    <div class="mdui-col-md-12" v-for="(sen,index) in sentenceList" :key="sen.sentenceId" >
                     <div class="list mdui-clearfix mdui-hoverable">
                         <div class="mdui-chip">
 
@@ -44,7 +44,7 @@
                         <!-- <i class="mdui-icon material-icons">favorite_border</i> -->
                         <!-- </button> -->
 
-                        <button class="mdui-btn mdui-btn-icon mdui-ripple mdui-float-right" v-if="isShow" >
+                        <button class="mdui-btn mdui-btn-icon mdui-ripple mdui-float-right" v-if="isShow" @click="delSen(sen.sentenceId,index)">
                             <i class="mdui-icon material-icons">delete</i>
                         </button>
 
@@ -101,12 +101,12 @@
                 <!-- 添加句子的表单 -->
 
                 <form label-width="100px" v-if="sentence != null" v-on:submit="onAddSentence">
-                    <div class="mdui-textfield mdui-textfield-floating-label">
+                    <div class="mdui-textfield ">
                     <label class="mdui-textfield-label">句子</label>
                     <input class="mdui-textfield-input" type="text" v-model="sentence.sentenceTxt" required/>
                     <div class="mdui-textfield-error">句子不能为空</div>
                     </div>
-                    <div class="mdui-textfield mdui-textfield-floating-label">
+                    <div class="mdui-textfield ">
                     <label class="mdui-textfield-label">作者</label>
                     <input class="mdui-textfield-input" type="text" v-model="sentence.authorName" required/>
                     <div class="mdui-textfield-error">作者不能为空</div>
@@ -180,7 +180,20 @@ export default {
       this.setDialogWidth();
   },
   methods:{
-      // 弹出菜单
+      // 删除句子
+      delSen:function(sentenceId,index){
+        this.$http.post("/api/delsenbysenid?sentenceId="+sentenceId).then(response => {
+            // 响应成功回调
+            console.log(response.data);
+            this.$message.success(response.data.message);
+            this.sentenceList.splice(index,1);
+
+        }),
+        function(response) {
+            // 响应错误回调
+            alert("未知错误");
+        };
+      },
 
       // 获取已发布
       getmysen:function(){
@@ -272,10 +285,31 @@ export default {
 
         }).then(response => {
             console.log(response.data);
-            this.$message.success(response.data.message)
-            this.dialogTableVisible = false  // 关闭弹框
-            // 提示
-        }),
+
+            Date.prototype.toLocaleString = function() {
+            // 补0   例如 2018/7/10 14:7:2  补完后为 2018/07/10 14:07:02
+            function addZero(num) {
+                if(num<10)
+                    return "0" + num;
+                return num;
+            }
+            // 按自定义拼接格式返回
+                return this.getFullYear() + "年" + addZero(this.getMonth() + 1) + "月" + addZero(this.getDate()) + "日"
+                //  + addZero(this.getHours()) + ":" + addZero(this.getMinutes()) + ":" + addZero(this.getSeconds())
+                ;
+            };
+
+
+            var date = new Date(Date.parse(new Date()));
+                this.sentence.createDate = date.toLocaleString();
+    
+                this.$message.success(response.data.message)
+                this.dialogTableVisible = false  // 关闭弹框
+                    // 提示
+            }),
+
+            
+
         function(response) {
           // 响应错误回调
           alert("未知错误");
