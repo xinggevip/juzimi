@@ -76,12 +76,9 @@
             <div v-if="load" class="mdui-spinner mdui-center"><div class="mdui-spinner-layer "><div class="mdui-spinner-circle-clipper mdui-spinner-left"><div class="mdui-spinner-circle"></div></div><div class="mdui-spinner-gap-patch"><div class="mdui-spinner-circle"></div></div><div class="mdui-spinner-circle-clipper mdui-spinner-right"><div class="mdui-spinner-circle"></div></div></div></div>
 
             </div>
-            <div class="demo-text" v-if="active2 === 1">
-               
-                <p>“我的心从来没有这么坚定过，所以我会为了补偿而死，也可以为了补偿而死……一辈子，急辈子都无所谓，我绝不后退！”</p>
-                <p>“如果我后退呢？如果我想要死呢？我不想你再次背对着我逃跑了……”</p>
-                <p>“那么就去地狱找到你，我绝对不逃！”</p>
-                <p>“白痴，你也哭了？因为那些软弱拖累你的脚步？”</p>
+            <div class="demo-text" v-if="active2 === 1" style="background-color:#e8eaf6">
+                <SentenceLike></SentenceLike>
+                
             </div>
             <div class="demo-text" v-if="active2 === 2">
                 <p>“不，这泪水……是因为勇气，因为力量，因为信任，……你不会懂的！”</p>
@@ -137,8 +134,14 @@
 </template>
 
 <script>
+import SentenceLike from "@/components/SentenceLike.vue";
+
+
 export default {
   name: "profile",
+  components: {
+    SentenceLike
+  },
   data(){
       return{
           sentence:null,
