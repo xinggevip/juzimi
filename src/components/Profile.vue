@@ -5,6 +5,9 @@
         <div class="mdui-toolbar mdui-color-theme">
             <a href="javascript:;" class="mdui-btn mdui-btn-icon" v-on:click.stop.prevent="toback"><i class="mdui-icon material-icons" >arrow_back</i></a>
             <a href="javascript:;" class="mdui-typo-title">主页</a>
+            <a v-if="active2 == 0" href="javascript:;" class="mdui-typo-title" style="font-size:16px;padding-top:3px;">发布</a>
+            <a v-if="active2 == 1" href="javascript:;" class="mdui-typo-title" style="font-size:16px;padding-top:3px;">收藏</a>
+            <a v-if="active2 == 2" href="javascript:;" class="mdui-typo-title" style="font-size:16px;padding-top:3px;">资料</a>
             <div class="mdui-toolbar-spacer"></div>
             
         </div>
@@ -15,9 +18,13 @@
     <div class="mdui-container" style="margin-top:55px;">
 
         <div class="header">
-            <div class="inheader">
-                <h1>用户名</h1>
-                <p>今天天气不错</p>
+            <div class="inheader" v-if="user != null">
+                <img class="mdui-img-circle" style="width:100px;" v-bind:src="user.userPicture"/>
+                <h2>{{user.userId}}
+                    <span v-if="user.userSex == '男'" class="mdui-img-circle" style="background-color:#64B5F6;color:white;display: inline-block;width:18px;height:18px;font-size:12px;"><b>♂</b></span>
+                    <span v-if="user.userSex == '女'" class="mdui-img-circle" style="background-color:#F06292;color:white;display: inline-block;width:18px;height:18px;font-size:12px;"><b>♀</b></span>
+                </h2>
+                <p>{{user.userSlogan}}</p>
                 
             </div>
             
@@ -81,10 +88,24 @@
                 
             </div>
             <div class="demo-text" v-if="active2 === 2">
-                <p>“不，这泪水……是因为勇气，因为力量，因为信任，……你不会懂的！”</p>
-                <p>“我不会帮你，想要什么样的未来……自己去追寻吧！”</p>
-                <p>“我不需要你的帮忙！未来我会一手开启，什么样的敌人我也不会惧怕……还有，其实我们可以成为朋友的……”</p>
-                <p>“也许吧，未来……给你了。”</p>
+                <ul class="mdui-list" v-if="user != null">
+                    <li class="mdui-list-item mdui-ripple">
+                        <i class="mdui-list-item-avatar mdui-icon material-icons" style="background-color:transparent;color:#c1c1c1;">account_circle</i>
+                        <div v-if="user.userName != null" class="mdui-list-item-content">{{user.userName}}</div>
+                        <div v-else class="mdui-list-item-content">未设置姓名</div>
+                    </li>
+                    <li class="mdui-list-item mdui-ripple">
+                        <i class="mdui-list-item-avatar mdui-icon material-icons" style="background-color:transparent;color:#c1c1c1;">phone_iphone</i>
+                        <div v-if="user.userPhone != null" class="mdui-list-item-content">{{user.userPhone}}</div>
+                        <div v-else class="mdui-list-item-content">未设置手机号</div>
+                    </li>
+                    <li class="mdui-list-item mdui-ripple">
+                        <i class="mdui-list-item-avatar mdui-icon material-icons" style="background-color:transparent;color:#c1c1c1;">assignment</i>
+                        <div v-if="user.userProfile != null" class="mdui-list-item-content">{{user.userProfile}}</div>
+                        <div v-else class="mdui-list-item-content">未设置简介</div>
+                    </li>
+                </ul>
+                
             </div>
             
 
@@ -144,6 +165,7 @@ export default {
   },
   data(){
       return{
+          user:null,
           sentence:null,
           // 菜单是否显示
           isShow:false,
@@ -181,8 +203,31 @@ export default {
           }
       };
       this.setDialogWidth();
+      // 获取根据id获取个人信息
+      this.getprofile();
+      // 给active2赋值
+    //   this.setActive();
   },
   methods:{
+    // 给active2赋值
+    setActive:function(){
+        alert(this.$store.state.active2);
+        this.active2 = this.$store.state.active2;
+        
+    },
+    // 获取根据id获取个人信息
+    getprofile:function(){
+        this.$http.post("/api/getprofilebyuserid?userId="+this.$route.params.userid).then(response => {
+            // 响应成功回调
+            this.user = response.data;
+            this.user.userPicture = this.$global.globalPictureUrl + response.data.userPicture;
+            console.log(this.user);
+        }),
+        function(response) {
+            // 响应错误回调
+            alert("未知错误");
+        };
+    },
       // 删除句子
       delSen:function(sentenceId,index){
         this.$http.post("/api/delsenbysenid?sentenceId="+sentenceId).then(response => {
@@ -274,6 +319,7 @@ export default {
     },
     // 点击添加句子
     postSentence:function(){
+        let tempAlbumName = this.sentence.albumName;
         
         delete this.sentence["albumName"];
         delete this.sentence["classifyName"];
@@ -305,6 +351,7 @@ export default {
 
             var date = new Date(Date.parse(new Date()));
                 this.sentence.createDate = date.toLocaleString();
+                this.sentence.albumName = tempAlbumName;
     
                 this.$message.success(response.data.message)
                 this.dialogTableVisible = false  // 关闭弹框
@@ -405,7 +452,8 @@ export default {
         width: 100%;
         padding-top: 5%;
         h1{
-            font-weight:normal
+            font-weight:normal;
+            
         }
     }
 }

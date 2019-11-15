@@ -77,29 +77,33 @@
       </div>
 
       <ul class="mdui-list">
-        <li class="mdui-list-item mdui-ripple">
+        <li class="mdui-list-item mdui-ripple" v-on:click="toMyLikeSen(user.userId)">
           <i class="mdui-list-item-icon mdui-icon material-icons">move_to_inbox</i>
           <div class="mdui-list-item-content">我的收藏</div>
         </li>
-        <li class="mdui-list-item mdui-ripple">
+        <li class="mdui-list-item mdui-ripple" v-on:click="toprofile(user.userId)">
           <i class="mdui-list-item-icon mdui-icon material-icons">send</i>
           <div class="mdui-list-item-content">我的发布</div>
         </li>
-        <li class="mdui-list-item mdui-ripple">
-          <i class="mdui-list-item-icon mdui-icon material-icons">send</i>
-          <div class="mdui-list-item-content">个人信息</div>
-        </li>
-        
-        <li class="mdui-list-item mdui-ripple">
+        <li class="mdui-list-item mdui-ripple" v-on:click="openSimpleDialog">
           <i class="mdui-list-item-icon mdui-icon material-icons">delete</i>
           <div class="mdui-list-item-content">关于我们</div>
         </li>
-        <li class="mdui-list-item mdui-ripple">
+        <li class="mdui-list-item mdui-ripple" v-on:click="signout">
           <i class="mdui-list-item-icon mdui-icon material-icons">error</i>
           <div class="mdui-list-item-content">退出登录</div>
         </li>
       </ul>
     </div>
+
+    <!-- 对话框 -->
+      <mu-dialog title="关于我们" width="360" :open.sync="openSimple">
+        此应用为17计应（对口）1班2组合作开发 <br>
+        组长：高星<br>
+        成员：常诚、常鑫、高壮、胡鑫磊、裴兆洋
+        <mu-button slot="actions" flat color="primary" @click="closeSimpleDialog">好的</mu-button>
+      </mu-dialog>
+
 
     <!-- 尾部 -->
     <!-- <div class="mdui-color-theme" id="content-footer">Copyright</div> -->
@@ -113,6 +117,7 @@ export default {
     return {
       token:this.$store.state.token,
       user:null,
+      openSimple: false
 
     };
   },
@@ -134,6 +139,23 @@ export default {
     // alert(this.$route.path);
   },
   methods: {
+    // 对话框
+    openSimpleDialog () {
+      this.openSimple = true;
+    },
+    closeSimpleDialog () {
+      this.openSimple = false;
+    },
+    // 去我的收藏
+    toMyLikeSen:function(url){
+      // this.$store.state.active2 = 1;
+      if(url != null){
+        window.location.href=this.$global.localhostUrl + "/profile/" + url;
+        // this.$router.push({path:'/profile/'+ url});
+      }else{
+        alert("请先登录");
+      }
+    },
     getUserActive:function(){
       if(this.user.isActive == 1){
           return ""
@@ -143,7 +165,10 @@ export default {
     },
     toprofile:function(url){
       if(url != null){
+        this.$store.state.active2 = 0;
         window.location.href=this.$global.localhostUrl + "/profile/" + url;
+      }else{
+        alert("请先登录");
       }
       
     },

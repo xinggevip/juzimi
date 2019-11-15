@@ -6,7 +6,8 @@ Vue.use(Vuex)
 // 初始化时用sessionStore.getItem('token'),这样子刷新页面就无需重新登录
 const state = {
     user: window.sessionStorage.getItem('user'),
-    token: window.sessionStorage.getItem('token')
+    token: window.sessionStorage.getItem('token'),
+    active2:0
 }
 const mutations = {
  //将token保存到sessionStorage里，token表示登陆状态
