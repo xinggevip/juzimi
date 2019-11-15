@@ -19,7 +19,7 @@
 
         <div class="header">
             <div class="inheader" v-if="user != null">
-                <img class="mdui-img-circle" style="width:100px;" v-bind:src="user.userPicture"/>
+                <img class="mdui-img-circle" style="width:100px;height:100px;" v-bind:src="user.userPicture"/>
                 <h2>{{user.userId}}
                     <span v-if="user.userSex == '男'" class="mdui-img-circle" style="background-color:#64B5F6;color:white;display: inline-block;width:18px;height:18px;font-size:12px;"><b>♂</b></span>
                     <span v-if="user.userSex == '女'" class="mdui-img-circle" style="background-color:#F06292;color:white;display: inline-block;width:18px;height:18px;font-size:12px;"><b>♀</b></span>

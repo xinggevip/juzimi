@@ -11,13 +11,19 @@
           </span>
           <a href="javascript:;" class="mdui-typo-title">句子迷</a>
           <div class="mdui-toolbar-spacer"></div>
-          <a href="javascript:;" class="mdui-btn mdui-btn-icon" v-on:click="test()">
-            <i class="mdui-icon material-icons">search</i>
-          </a>
+          <div style="width:25%">
+              <div class="mdui-textfield mdui-textfield-expandable mdui-float-right" >
+                <button class="mdui-textfield-icon mdui-btn mdui-btn-icon"><i class="mdui-icon material-icons">search</i></button>
+                <input class="mdui-textfield-input" type="text" placeholder="Search"/>
+                <button class="mdui-textfield-close mdui-btn mdui-btn-icon"><i class="mdui-icon material-icons">close</i></button>
+              </div>
+          </div>
+          
+
           <a href="javascript:;" class="mdui-btn mdui-btn-icon" id="isopen" v-on:click="tologin()">
             <i v-if="user == null" class="mdui-icon material-icons">account_circle</i>
             <!-- <div class="tu mdui-hoverable" v-bind:style="{ 'background-image': 'url(' + album.albumPicture + ')'}"> -->
-            <img v-if="user != null" class="mdui-icon material-icons mdui-img-circle" v-bind:src="user.userPicture"/>
+            <img v-if="user != null" class="mdui-icon material-icons mdui-img-circle" v-bind:src="$global.globalPictureUrl + (JSON.parse(this.$store.state.user)).userPicture"/>
           </a>
           
           <!-- 菜单 -->
@@ -58,14 +64,14 @@
             <div class="mdui-card-primary">
               <div v-if="token" class="mdui-card-primary-title">{{user.userId}} <span style="color:red">{{ getUserActive() }}</span> </div>
               <div v-if="token == null" class="mdui-card-primary-title">未登录</div>
-              <div v-if="token" class="mdui-card-primary-subtitle" style="overflow: hidden;text-overflow: ellipsis;font-size:13px;padding-top:2px;" >{{user.userSlogan}}</div>
+              <div v-if="token" class="mdui-card-primary-subtitle" style="overflow: hidden;text-overflow: ellipsis;font-size:13px;padding-top:2px;" >{{(JSON.parse(this.$store.state.user)).userSlogan}}</div>
               <div v-if="token == null" class="mdui-card-primary-subtitle"><router-link to="/login" style="color:pink">登录</router-link> 使用全部功能</div>
               
             </div>
             
             <div class="mdui-card-actions" style="font-size:5px;opacity:0.7;margin-left:-7px;" v-if="token != null">
               <button class="mdui-btn mdui-ripple mdui-ripple-white" v-on:click="toprofile(user.userId)">我的主页</button>
-              <button class="mdui-btn mdui-ripple mdui-ripple-white">编辑资料</button>
+              <button class="mdui-btn mdui-ripple mdui-ripple-white" v-on:click="toEditProfile">编辑资料</button>
             </div>
 
           </div>
@@ -139,6 +145,10 @@ export default {
     // alert(this.$route.path);
   },
   methods: {
+    // 去修改资料
+    toEditProfile:function(){
+      this.$router.push({path:'/editprofile'});
+    },
     // 对话框
     openSimpleDialog () {
       this.openSimple = true;

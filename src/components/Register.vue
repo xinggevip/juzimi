@@ -81,7 +81,7 @@ export default {
             position: 'right-bottom'
           });
           // setTimeout("javascript:location.href='http://localhost:8081/login'", 1000);
-          setTimeout("javascript:location.href='" + this.$global.localhostUrl +"'", 1000);
+          setTimeout("javascript:location.href='" + this.$global.localhostUrl +"/login'", 1000);
         }else{
           alert("用户名已存在，注册失败");
         }

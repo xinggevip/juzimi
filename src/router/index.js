@@ -8,6 +8,7 @@ import CreateAlbum from './../components/CreateAlbum.vue'
 import Album from './../components/Album.vue'
 import Index from './../components/Index.vue'
 import Profile from './../components/Profile.vue'
+import EditProfile from './../components/EditProfile.vue'
 
 
 Vue.use(VueRouter)
@@ -56,7 +57,16 @@ const routes = [
         meta:{
           requireAuth: true  // 添加该字段，表示进入这个路由是需要登录的
         }
-      }
+      },
+      {
+        path: '/editprofile',
+        name: 'editprofile',
+        component:EditProfile,
+        meta:{
+          requireAuth: true  // 添加该字段，表示进入这个路由是需要登录的
+        }
+      },
+
     ]
   },
   {
