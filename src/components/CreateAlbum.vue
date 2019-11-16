@@ -10,7 +10,7 @@
           <h4>上传专辑封面<span style="color:red;text-decoration: none;font-weight:normal"> 建议比例1：1.5</span></h4>
           <!-- 文件上传组件 -->
           <el-upload
-            action="/api/upload"
+            action="http://juapi.qiangssvip.com/api/upload"
             ref="upload"
             name="albumPicture"
             list-type="picture-card"

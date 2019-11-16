@@ -105,7 +105,8 @@ export default {
             position: 'right-bottom'
           });
           setTimeout(()=>{
-            window.location.href=this.$global.localhostUrl;
+            window.location.href=this.$global.wwwUrl;
+            // this.$router.push("/");
           }, 1000);
         }else{
           alert("登录失败");

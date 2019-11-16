@@ -256,7 +256,7 @@ export default {
   methods: {
     // 点击头像进入用户主页
     goprofile:function(userId){
-      window.location.href=this.$global.localhostUrl + "/#/profile/" + userId;
+      window.location.href=this.$global.localhostUrl + "/profile/" + userId;
     },
     // 已登录则进行toggle收藏操作
     togglelike:function(isLike,sentenceId,index){
