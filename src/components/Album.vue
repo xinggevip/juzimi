@@ -15,7 +15,7 @@
                     <p style="padding:10px;padding-bottom:0px;position: absolute;bottom:0px;line-height:20px;font-size: 13px;">
                         此专辑由<a href="javascript:;">{{albuminfo.userId}}</a>创建<br>
                         时间为{{albuminfo.createDate}} <br>
-                        共有100个句子
+                        共有{{sentenceCount}}个句子
                     </p>
                       
                   </div>
@@ -73,7 +73,7 @@
 
             <div class="mdui-col-md-12" v-for="(sen,index) in sentenceList" :key="sen.sentenceId" >
               <div class="list mdui-clearfix mdui-hoverable">
-                <div class="mdui-chip">
+                <div class="mdui-chip" v-on:click="goprofile(sen.userId)">
                   <!-- <span class="mdui-chip-icon mdui-color-blue">
                     <i class="mdui-icon material-icons">face</i>
                   </span> -->
@@ -119,7 +119,7 @@
           <div class="zhu" v-bind:style="{ 'background-image': 'url(' + albuminfo.albumPicture + ')'}"></div>
           <span class="title"><b>{{albuminfo.albumName}}</b></span>
           <div style="line-height:20px;font-size: 13px;">
-              此专辑由<a href="javascript:;">{{albuminfo.userId}}</a>创建
+              此专辑由<a href="javascript:;" v-on:click.stop.prevent="goprofile(albuminfo.userId)">{{albuminfo.userId}}</a>创建
             <br>
             <span>时间为{{albuminfo.createDate}}</span>
             <br>
@@ -254,6 +254,10 @@ export default {
   },
 
   methods: {
+    // 点击头像进入用户主页
+    goprofile:function(userId){
+      window.location.href=this.$global.localhostUrl + "/#/profile/" + userId;
+    },
     // 已登录则进行toggle收藏操作
     togglelike:function(isLike,sentenceId,index){
       let userId = (JSON.parse(this.$store.state.user)).userId;

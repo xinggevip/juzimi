@@ -9,7 +9,7 @@
             
             <div class="mdui-col-md-12" v-for="(sen,index) in sentenceList" :key="sen.sentenceId" >
               <div class="list mdui-clearfix mdui-hoverable">
-                <div class="mdui-chip">
+                <div class="mdui-chip" v-on:click="goprofile(sen.userId)">
                   <!-- <span class="mdui-chip-icon mdui-color-blue">
                     <i class="mdui-icon material-icons">face</i>
                   </span> -->
@@ -129,6 +129,10 @@ export default {
   },
 
   methods: {
+    // 点击头像进入用户主页
+    goprofile:function(userId){
+      window.location.href=this.$global.localhostUrl + "/#/profile/" + userId;
+    },
     // 已登录则进行toggle收藏操作
     togglelike:function(isLike,sentenceId,index){
       let userId = (JSON.parse(this.$store.state.user)).userId;
