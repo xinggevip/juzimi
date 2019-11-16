@@ -13,7 +13,7 @@
                   <div class="right" style="width:70%;height:100%;float:left;box-sizing:border-box;position: relative;">
                     <b style="padding:10px;position: absolute;top:0px;">{{albuminfo.albumName}}</b>
                     <p style="padding:10px;padding-bottom:0px;position: absolute;bottom:0px;line-height:20px;font-size: 13px;">
-                        此专辑由<a href="javascript:;">{{albuminfo.userId}}</a>创建<br>
+                        此专辑由<a href="javascript:;" v-on:click.stop.prevent="goprofile(albuminfo.userId)">{{albuminfo.userId}}</a>创建<br>
                         时间为{{albuminfo.createDate}} <br>
                         共有{{sentenceCount}}个句子
                     </p>
