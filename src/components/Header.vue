@@ -160,7 +160,7 @@ export default {
     toMyLikeSen:function(url){
       // this.$store.state.active2 = 1;
       if(url != null){
-        window.location.href=this.$global.localhostUrl + "/profile/" + url;
+        window.location.href=this.$global.localhostUrl + "/#/profile/" + url;
         // this.$router.push({path:'/profile/'+ url});
       }else{
         alert("请先登录");
@@ -176,7 +176,7 @@ export default {
     toprofile:function(url){
       if(url != null){
         this.$store.state.active2 = 0;
-        window.location.href=this.$global.localhostUrl + "/profile/" + url;
+        window.location.href=this.$global.localhostUrl + "/#/profile/" + url;
       }else{
         alert("请先登录");
       }
@@ -210,7 +210,9 @@ export default {
             message: '已退出登录',
             position: 'right-bottom'
           });
-          setTimeout("javascript:location.href='http://localhost:8081/login'", 1000);
+          setTimeout(()=>{
+            window.location.href=this.$global.localhostUrl + "/#/login/";
+          }, 1000);
     },
     tospace:function(){
       alert("我的主页");

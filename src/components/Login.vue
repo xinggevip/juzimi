@@ -104,7 +104,9 @@ export default {
             message: '登录成功',
             position: 'right-bottom'
           });
-          setTimeout("javascript:location.href='http://localhost:8081/'", 1000);
+          setTimeout(()=>{
+            window.location.href=this.$global.localhostUrl;
+          }, 1000);
         }else{
           alert("登录失败");
         }

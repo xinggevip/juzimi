@@ -9,7 +9,7 @@ import Album from './../components/Album.vue'
 import Index from './../components/Index.vue'
 import Profile from './../components/Profile.vue'
 import EditProfile from './../components/EditProfile.vue'
-
+import NotFoundComponent from './../components/NotFoundComponent.vue'
 
 Vue.use(VueRouter)
 
@@ -73,13 +73,14 @@ const routes = [
     path: '/profile/:userid',
     name: 'profile',
     component: Profile
-  }
+  },
+  { path: '*', component: NotFoundComponent }
 ]
 
 
 
 const router = new VueRouter({
-  mode: 'history',
+  // mode: 'history',
   base: process.env.BASE_URL,
   routes
 })

@@ -12,6 +12,11 @@ import ElementUI from 'element-ui';
 import 'default-passive-events'
 //导入axios组件
 import axios from 'axios'
+axios.defaults.baseURL = "http://juapi.qiangssvip.com"
+// axios.defaults.baseURL = "http://localhost:8080"
+//设置全局，每次ajax请求携带cookies
+// axios.defaults.withCredentials = true
+
 //让$http等同于axios，实现vue-resource的无缝切换
 Vue.prototype.$http = axios
 // import './assets/css/mdui'
