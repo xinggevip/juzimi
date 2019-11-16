@@ -84,7 +84,7 @@
 
       <ul class="mdui-list">
         <li class="mdui-list-item mdui-ripple" v-on:click="toMyLikeSen(user.userId)">
-          <i class="mdui-list-item-icon mdui-icon material-icons">move_to_inbox</i>
+          <i class="mdui-list-item-icon mdui-icon material-icons">favorite</i>
           <div class="mdui-list-item-content">我的收藏</div>
         </li>
         <li class="mdui-list-item mdui-ripple" v-on:click="toprofile(user.userId)">
@@ -92,11 +92,11 @@
           <div class="mdui-list-item-content">我的发布</div>
         </li>
         <li class="mdui-list-item mdui-ripple" v-on:click="openSimpleDialog">
-          <i class="mdui-list-item-icon mdui-icon material-icons">delete</i>
+          <i class="mdui-list-item-icon mdui-icon material-icons">error</i>
           <div class="mdui-list-item-content">关于我们</div>
         </li>
         <li class="mdui-list-item mdui-ripple" v-on:click="signout">
-          <i class="mdui-list-item-icon mdui-icon material-icons">error</i>
+          <i class="mdui-list-item-icon mdui-icon material-icons">exit_to_app</i>
           <div class="mdui-list-item-content">退出登录</div>
         </li>
       </ul>
