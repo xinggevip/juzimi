@@ -3,7 +3,7 @@
     <!-- 尾部 -->
     <div class="mdui-container">
     <div class="mdui-row">
-        <div class="mdui-color-theme-100 mdui-col-xs-12" id="content-footer">Copyright</div>
+        <div class="mdui-color-theme-100 mdui-col-xs-12" id="content-footer">Copyright © 2019 - 2019 Tencent. All Rights Reserved. 句子迷 版权所有</div>
     </div>
     </div>
     
