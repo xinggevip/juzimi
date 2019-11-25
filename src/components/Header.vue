@@ -11,10 +11,12 @@
           </span>
           <a href="javascript:;" class="mdui-typo-title">句子迷</a>
           <div class="mdui-toolbar-spacer"></div>
-          <div style="width:25%">
+          <div class="mdui-col-xs-12 mdui-col-md-3">
               <div class="mdui-textfield mdui-textfield-expandable mdui-float-right" >
-                <button class="mdui-textfield-icon mdui-btn mdui-btn-icon"><i class="mdui-icon material-icons">search</i></button>
-                <input class="mdui-textfield-input" type="text" placeholder="Search"/>
+                
+                <!-- <router-link to="/search" class="mdui-btn mdui-btn-icon"><i class="mdui-icon material-icons">search</i></router-link> -->
+                <button class="mdui-textfield-icon mdui-btn mdui-btn-icon"><i class="mdui-icon material-icons" >search</i></button>
+                <input class="mdui-textfield-input" style="color:white" v-model="search" type="text" v-on:keyup.enter="toSearchPage(search)" placeholder="Search"/>
                 <button class="mdui-textfield-close mdui-btn mdui-btn-icon"><i class="mdui-icon material-icons">close</i></button>
               </div>
           </div>
@@ -121,6 +123,7 @@ import { userInfo } from 'os';
 export default {
   data() {
     return {
+      search:'',
       token:this.$store.state.token,
       user:null,
       openSimple: false
@@ -202,6 +205,17 @@ export default {
       }
       // this.$router.push("/login");
       
+    },
+    // 去搜索
+    toSearchPage:function(search){
+      // this.$router.push("/search");
+      this.$router.push({
+              path: '/search',
+                query: {
+                  key: search
+                }
+              })
+
     },
     signout:function(){
         // alert("退出登录");

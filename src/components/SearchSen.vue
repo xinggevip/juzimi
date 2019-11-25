@@ -2,11 +2,11 @@
   <div class="index">
     
 
-    <div class="mdui-container">
+    <div class="mdui-container top">
       <div class="mdui-row">
-        <div class="mdui-col-md-9">
+        <div class="mdui-col-md-12">
           <div class="mdui-row">
-            
+            <!-- <h1>{{keyy}}</h1> -->
             <div class="mdui-col-md-12" v-for="(sen,index) in sentenceList" :key="sen.sentenceId" >
               <div class="list mdui-clearfix mdui-hoverable">
                 <div class="mdui-chip" v-on:click="goprofile(sen.userId)">
@@ -51,39 +51,10 @@
 
         </div>
 
-        <div class="mdui-col-md-3 you mdui-hidden-sm-down">
-          <div class="zhu" style="margin-bottom:16px;">
-              <div class="tjtitle" style="border-bottom:1px solid #ccc;padding-bottom:11px;padding-top:7px;">
-                <b>推荐专辑</b>
-              </div>
-              <p>
-                    <ul class="tjlist" v-if="pushAlbums.length > 0">
-                      <li v-for="album in pushAlbums" :key="album.albumId">
-                        <router-link href="javascript:;" class="mdui-text-color-black-secondary" v-bind:to="'/classify/'+ album.classfiyId +'/album/' + album.albumId">《{{album.albumName}}》</router-link>
-                      </li>
-                      
-                    </ul>
 
-              </p>
-              
-
-          </div>
-
-          <!-- <div class="zhu">
-            <div class="tjtitle" style="border-bottom:1px solid #ccc;padding-bottom:12px;padding-top:8px;">
-                <b>扫码体验移动端</b>
-            </div>
-            <div style="width:100%;padding:20px;box-sizing:border-box;">
-                <img src="https://www.qiangssvip.com/usr/uploads/2019/03/2801480982.jpg" alt="" style="width:100%;margin-top:2px;">
-            </div>
-            
-          </div> -->
-
-        </div>
       </div>
     </div>
 
-    <Footer></Footer>
   </div>
 </template>
 
@@ -111,16 +82,25 @@ export default {
       RequestByFirstPageDate:{
         "userId":'',
         "pageNum":0,
-        "pageSize":10
+        "pageSize":10,
+        "keyy":this.keyy
       }
 
     };
   },
-  name: "home",
+  name: "SearchSen",
   components: {
     HelloWorld,
     Header,
     Footer
+  },
+  props:{
+      keyy:String
+  },
+  watch:{
+      'keyy':function(){
+          this.reData();
+      }
   },
   mounted() {
     this.$$.mutation();
@@ -233,7 +213,7 @@ export default {
       this.load = true;
       this.RequestByFirstPageDate.pageNum += 1;
 
-      this.$http.post("/api/getfirstpagedata",this.RequestByFirstPageDate,{
+      this.$http.post("/api/getsearchsen",this.RequestByFirstPageDate,{
         headers: {
             'Content-Type':'application/json;charset=UTF-8'
         }
@@ -333,9 +313,62 @@ export default {
 
 
 
+    },
+    reData:function(){
+      this.sentenceList = [];
+      this.load = true;
+      this.RequestByFirstPageDate.pageNum = 1;
+      this.RequestByFirstPageDate.keyy = this.keyy;
+
+      this.$http.post("/api/getsearchsen",this.RequestByFirstPageDate,{
+        headers: {
+            'Content-Type':'application/json;charset=UTF-8'
+        }
+
+      }).then(response => {
+        
+        // 响应成功回调
+        console.log(response.data);
+        // 遍历改日期
+        Date.prototype.toLocaleString = function() {
+        // 补0   例如 2018/7/10 14:7:2  补完后为 2018/07/10 14:07:02
+        function addZero(num) {
+            if(num<10)
+                return "0" + num;
+            return num;
+        }
+        // 按自定义拼接格式返回
+            return this.getFullYear() + "年" + addZero(this.getMonth() + 1) + "月" + addZero(this.getDate()) + "日"
+            //  + addZero(this.getHours()) + ":" + addZero(this.getMinutes()) + ":" + addZero(this.getSeconds())
+             ;
+        };
+
+        (response.data.firstPageDataList).forEach((item, index) => {
+            item.userPicture = this.$global.globalPictureUrl + item.userPicture;
+            var date = new Date(item.createDate);
+            item.createDate = date.toLocaleString();
+            //在这 改日期  
+            // console.log(item);
+            this.sentenceList.push(item);
+          })
+
+
+
+        // this.sentenceList = response.data.sentenceList;
+        this.next = response.data.next;
+        
+
+        this.load = false;
+      }),
+        function(response) {
+          // 响应错误回调
+        };
+
+
     }
   },
   created() {
+    
     this.fetchSentence();
     // 给用户名赋值
     if(this.$store.state.token){
@@ -349,7 +382,9 @@ export default {
 </script>
 
 <style lang="less" >
-
+.top{
+    margin-top:-50px;
+}
 .you {
   // background-color: red;
   height: 500px;

@@ -1,5 +1,5 @@
 <template>
-  <div class="classify">
+  <div class="searchalbum">
     <div class="mdui-container">
       <div class="mdui-row" id="listfather">
 
@@ -40,12 +40,7 @@
 
     </div>
 
-
-    <button class="mdui-fab mdui-fab-fixed mdui-color-theme" v-on:click="tocreatealbum" style="z-index:9999" ><i class="mdui-icon material-icons">add</i></button>
     
-
-
-    <Footer></Footer>
 
   </div>
 </template>
@@ -53,7 +48,7 @@
 import Footer from "@/components/Footer.vue";
 
 export default {
-  name:"classify",
+  name:"SearchAlbum",
   components: {
      Footer
    },
@@ -65,13 +60,22 @@ export default {
       next:false,
       // 请求参数  1.分类id  2.从第几页开始查 3.查多少条记录
       albumRequestByAuto:{
-          classifyId:Number(this.$route.params.classifyid),
+        //   classifyId:Number(this.$route.params.classifyid),
+          keyy:this.keyy,
           pageNum:1,
           pageSize:10
       }
     };
   },
-
+  props:{
+      keyy:String
+  },
+  watch:{
+      'keyy':function(){
+          // this.reData();
+          this.fetchCustomers();
+      }
+  },
   mounted() {
     this.$$.mutation();
     // 获取图片宽度，
@@ -83,9 +87,12 @@ export default {
     
     // Get数据
     fetchCustomers() {
-
+      this.albums = [];
+      this.onload = true;
+      this.albumRequestByAuto.pageNum = 1;
+      this.albumRequestByAuto.keyy = this.keyy;
       console.log(this.albumRequestByAuto);
-      this.$http.post("/api/autogetalbums",this.albumRequestByAuto,{
+      this.$http.post("/api/searchalbum",this.albumRequestByAuto,{
         headers: {
             'Content-Type':'application/json;charset=UTF-8'
         }
@@ -118,7 +125,7 @@ export default {
       // 请求一次  页码加一
       this.albumRequestByAuto.pageNum = this.albumRequestByAuto.pageNum + 1;
       console.log(this.albumRequestByAuto);
-      this.$http.post("/api/autogetalbums",this.albumRequestByAuto,{
+      this.$http.post("/api/searchalbum",this.albumRequestByAuto,{
         headers: {
             'Content-Type':'application/json;charset=UTF-8'
         }

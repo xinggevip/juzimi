@@ -1,10 +1,10 @@
 module.exports = {
   devServer: {
-    port: 8081,
+    port: 8082,
     proxy: {
       '/api': {
-        // target: 'http://localhost:8080',
-        target: 'http://juapi.qiangssvip.com',
+        target: 'http://localhost:8080',
+        // target: 'http://juapi.qiangssvip.com',
         // target: targetUrl,
         ws: true,
         changeOrigin: true,

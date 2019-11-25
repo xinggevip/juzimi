@@ -10,6 +10,7 @@ import Index from './../components/Index.vue'
 import Profile from './../components/Profile.vue'
 import EditProfile from './../components/EditProfile.vue'
 import NotFoundComponent from './../components/NotFoundComponent.vue'
+import Search from '../components/Search.vue'
 
 Vue.use(VueRouter)
 
@@ -65,6 +66,11 @@ const routes = [
         meta:{
           requireAuth: true  // 添加该字段，表示进入这个路由是需要登录的
         }
+      },
+      {
+        path: '/search',
+        name: 'search',
+        component:Search,
       },
 
     ]

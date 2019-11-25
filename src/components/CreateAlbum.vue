@@ -9,8 +9,9 @@
           <h1>创建专辑</h1>
           <h4>上传专辑封面<span style="color:red;text-decoration: none;font-weight:normal"> 建议比例1：1.5</span></h4>
           <!-- 文件上传组件 -->
+          <!-- action="http://juapi.qiangssvip.com/api/upload" -->
           <el-upload
-            action="http://juapi.qiangssvip.com/api/upload"
+            action="http://localhost:8080/api/upload"
             ref="upload"
             name="albumPicture"
             list-type="picture-card"
