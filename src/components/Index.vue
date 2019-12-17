@@ -59,7 +59,7 @@
               <p>
                     <ul class="tjlist" v-if="pushAlbums.length > 0">
                       <li v-for="album in pushAlbums" :key="album.albumId">
-                        <router-link href="javascript:;" class="mdui-text-color-black-secondary" v-bind:to="'/classify/'+ album.classfiyId +'/album/' + album.albumId">《{{album.albumName}}》</router-link>
+                        <router-link href="javascript:;" class="mdui-text-color-black-secondary" v-bind:to="'/classify/'+ album.classifyId +'/album/' + album.albumId">《{{album.albumName}}》</router-link>
                       </li>
                       
                     </ul>
@@ -130,6 +130,7 @@ export default {
     // 获取推荐专辑列表
     getPushAlbums:function(){
       this.$http.post("/api/getpushalbum").then(response => {
+        console.log(response.data);
           // 响应成功回调
           this.pushAlbums = response.data;
       }),

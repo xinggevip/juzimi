@@ -10,6 +10,7 @@
           <h4>上传头像<span style="color:red;text-decoration: none;font-weight:normal"> 建议比例1：1</span></h4>
           <!-- 文件上传组件 -->
           <el-upload
+            style="width:100px;heigt:100px;"
             action="http://juapi.qiangssvip.com/api/uploadheadpicture"
             ref="upload"
             name="userPicture"
@@ -55,6 +56,8 @@
           <el-dialog :visible.sync="dialogVisible">
             <img width="100%" :src="dialogImageUrl" alt="">
           </el-dialog>
+
+          
 
           <!-- 单行文本框 -->
           <div class="mdui-textfield ">
